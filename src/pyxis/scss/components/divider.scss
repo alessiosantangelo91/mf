@@ -1,0 +1,80 @@
+@use "sass:map";
+@use "../foundations";
+@use "../tokens/breakpoints" as breakpoints;
+@use "../tokens/spacings" as spacings;
+
+$_spacingWithZero: map.merge(
+  (
+    0: 0,
+  ),
+  spacings.$spacings
+);
+
+.divider {
+  border: 0;
+  border-color: foundations.color(neutral85);
+  border-style: solid;
+  margin: 0;
+}
+
+.divider--neutral95 {
+  border-color: foundations.color(neutral95);
+}
+
+.divider--alt {
+  border-color: foundations.color(neutralLight);
+}
+
+.divider--horizontal {
+  border-bottom-width: foundations.rem(1px);
+  height: auto;
+  width: 100%;
+}
+.divider--horizontal.divider--border-m {
+  border-bottom-width: foundations.rem(2px);
+}
+
+.divider--vertical {
+  align-self: stretch;
+  border-right-width: foundations.rem(1px);
+  flex-shrink: 0;
+  height: auto;
+}
+
+.divider--vertical.divider--border-m {
+  border-right-width: foundations.rem(2px);
+}
+
+@each $spacingName, $spacingValue in $_spacingWithZero {
+  .divider--horizontal.divider--margin-#{$spacingName} {
+    margin-bottom: foundations.spacing($spacingName);
+    margin-top: foundations.spacing($spacingName);
+  }
+}
+
+@each $spacingName, $spacingValue in $_spacingWithZero {
+  .divider--vertical.divider--margin-#{$spacingName} {
+    margin-left: foundations.spacing($spacingName);
+    margin-right: foundations.spacing($spacingName);
+  }
+}
+
+@each $breakpointName, $breakpointValue in breakpoints.$breakpoints {
+  @if (not foundations.isBase($breakpointName)) {
+    @each $spacingName, $spacingValue in $_spacingWithZero {
+      .divider--horizontal.divider--margin-#{$spacingName}-from-#{$breakpointName} {
+        @include foundations.mq($breakpointName) {
+          margin-bottom: foundations.spacing($spacingName);
+          margin-top: foundations.spacing($spacingName);
+        }
+      }
+
+      .divider--vertical.divider--margin-#{$spacingName}-from-#{$breakpointName} {
+        @include foundations.mq($breakpointName) {
+          margin-left: foundations.spacing($spacingName);
+          margin-right: foundations.spacing($spacingName);
+        }
+      }
+    }
+  }
+}

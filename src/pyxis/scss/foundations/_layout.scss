@@ -1,0 +1,118 @@
+// Layout utilities used in Pyxis.
+@use "../config";
+@use "lib";
+
+$_layoutUtilities: (
+  align-content: (
+    center,
+    flex-end,
+    flex-start,
+    space-around,
+    space-between,
+    space-evenly,
+  ),
+  align-items: (
+    baseline,
+    center,
+    flex-end,
+    flex-start,
+    stretch,
+  ),
+  align-self: (
+    auto,
+    baseline,
+    center,
+    flex-end,
+    flex-start,
+    stretch,
+  ),
+  display: (
+    block,
+    flex,
+    grid,
+    inline,
+    inline-block,
+    inline-flex,
+    inline-grid,
+    none,
+  ),
+  flex-direction: (
+    column,
+    column-reverse,
+    row,
+    row-reverse,
+  ),
+  grid-auto-flow: (
+    column,
+    column-dense,
+    dense,
+    row,
+    row-dense,
+  ),
+  justify-content: (
+    center,
+    flex-end,
+    flex-start,
+    space-around,
+    space-between,
+    space-evenly,
+  ),
+  justify-items: (
+    center,
+    end,
+    start,
+    stretch,
+  ),
+  justify-self: (
+    auto,
+    center,
+    end,
+    start,
+    stretch,
+  ),
+  position: (
+    absolute,
+    fixed,
+    relative,
+    static,
+    sticky,
+  ),
+);
+
+// Generate position absolute coordinates
+@mixin absolute($top: 0, $right: 0, $bottom: 0, $left: 0) {
+  bottom: $bottom;
+  left: $left;
+  position: absolute;
+  right: $right;
+  top: $top;
+}
+
+// Generate position sticky coordinates
+@mixin sticky($top: 0, $right: 0, $bottom: 0, $left: 0) {
+  bottom: $bottom;
+  left: $left;
+  position: sticky;
+  right: $right;
+  top: $top;
+}
+
+// Generate position fixed coordinates
+@mixin fixed($top: 0, $right: 0, $bottom: 0, $left: 0) {
+  bottom: $bottom;
+  left: $left;
+  position: fixed;
+  right: $right;
+  top: $top;
+}
+
+// Create atom classes for layout in $_layoutUtilities
+@mixin createAtoms() {
+  @each $property, $propertyValues in $_layoutUtilities {
+    @each $value in $propertyValues {
+      .#{$property}-#{$value} {
+        #{$property}: #{$value};
+      }
+    }
+  }
+}

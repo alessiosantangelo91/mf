@@ -1,0 +1,33 @@
+@use "../foundations";
+@use "animations";
+@use "mixins";
+@use "sass:math";
+
+.counter {
+  align-items: center;
+  column-gap: foundations.spacing(s);
+  display: grid;
+  grid-auto-flow: column;
+  height: foundations.rem(50);
+  justify-content: space-between;
+}
+
+.counter--disabled {
+  color: foundations.color(neutral50);
+}
+
+.counter-wrapper {
+  align-items: center;
+  column-gap: foundations.spacing(xs);
+  display: grid;
+  grid-auto-flow: column;
+}
+
+.counter__content {
+  align-content: center;
+  column-gap: foundations.spacing(4xs);
+  display: grid;
+  grid-auto-flow: column;
+  min-width: foundations.rem(20);
+  text-align: center;
+}

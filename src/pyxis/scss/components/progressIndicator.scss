@@ -1,0 +1,70 @@
+@use "../foundations";
+@use "sass:math";
+
+$_radius: 14;
+$_radiusFromSmall: 18;
+$_strokeWidth: 4;
+$_totalWidth: foundations.rem($_radius * 2 + $_strokeWidth);
+$_totalWidthFromSmall: foundations.rem($_radiusFromSmall * 2 + $_strokeWidth);
+
+.progress-indicator {
+  align-items: center;
+  display: grid;
+  gap: foundations.spacing(xs);
+  grid-template: "content chart" / max-content $_totalWidth;
+
+  @include foundations.mq(s) {
+    gap: foundations.spacing(s);
+    grid-template: "content chart" / max-content $_totalWidthFromSmall;
+  }
+}
+
+.progress-indicator--left-aligned {
+  grid-template: "chart content" / $_totalWidth max-content;
+
+  @include foundations.mq(s) {
+    grid-template: "chart content" / $_totalWidthFromSmall max-content;
+  }
+}
+
+.progress-indicator__content-wrapper {
+  grid-area: content;
+  text-align: right;
+
+  .progress-indicator--left-aligned & {
+    text-align: left;
+  }
+}
+
+.progress-indicator__step-number {
+  @include foundations.text(s, bold, brandBase);
+}
+
+.progress-indicator__step-title {
+  @include foundations.text(l, bold, neutralBase);
+}
+
+.progress-indicator__chart {
+  align-items: center;
+  display: grid;
+  grid-area: chart;
+}
+
+.progress-indicator__chart__background {
+  fill: transparent;
+  stroke: foundations.color(brandLight);
+  stroke-width: $_strokeWidth;
+}
+
+.progress-indicator__chart__progress {
+  $circumference: 2px * math.$pi * $_radius;
+  fill: transparent;
+  stroke: foundations.color(brandBase);
+  stroke-dasharray: $circumference;
+  stroke-dashoffset: calc(#{$circumference} - #{$circumference} * var(--percentage) / 100);
+  stroke-linecap: round;
+  stroke-width: $_strokeWidth;
+  transform: rotate(-90deg);
+  transform-origin: center;
+  transition: stroke-dashoffset foundations.duration(base) foundations.timing(base);
+}

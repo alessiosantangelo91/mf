@@ -1,0 +1,11 @@
+@use "../foundations/colors";
+@use "../foundations/elevations";
+@use "../foundations/radius";
+@use "../foundations/spacings";
+@use "../foundations/typography";
+
+@include colors.createCSSVariables();
+@include elevations.createCSSVariables();
+@include radius.createCSSVariables();
+@include spacings.createCSSVariables();
+@include typography.createCSSVariables();

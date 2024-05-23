@@ -1,0 +1,303 @@
+@use "../foundations";
+
+// Sizes of Pyxis' lists.
+// Each size has direct influence on properties in the sub-maps.
+$_sizes: (
+  s: (
+    bulletOffset: 1px,
+    bulletSize: 6px,
+    columnGap: m,
+    rowGap: xs,
+  ),
+  m: (
+    bulletOffset: 1px,
+    bulletSize: 7px,
+    columnGap: l,
+    rowGap: s,
+  ),
+  l: (
+    bulletOffset: 4px,
+    bulletSize: 8px,
+    columnGap: xl,
+    rowGap: s,
+  ),
+);
+
+.list {
+  counter-reset: list-counter;
+  display: grid;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  row-gap: foundations.spacing(xs);
+}
+
+// Generate classes for sizing and set related properties
+@each $size, $properties in $_sizes {
+  .list--#{$size} {
+    row-gap: foundations.spacing(foundations.get($properties, rowGap));
+
+    .list__item__addon--bullet:before {
+      height: foundations.rem(foundations.get($properties, bulletSize));
+      transform: translateY(foundations.rem(foundations.get($properties, bulletOffset)));
+      width: foundations.rem(foundations.get($properties, bulletSize));
+
+      @if ($size == l) {
+        @include foundations.mq(s) {
+          transform: translateY(foundations.rem(6px));
+        }
+
+        @include foundations.mq(l) {
+          transform: translateY(foundations.rem(8px));
+        }
+      }
+    }
+
+    .list__item__addon--icon {
+      padding-top: foundations.rem(3px);
+
+      @if ($size == l) {
+        @include foundations.mq(s) {
+          padding-top: foundations.rem(5px);
+        }
+
+        @include foundations.mq(l) {
+          padding-top: foundations.rem(8px);
+        }
+      }
+    }
+
+    .list__item__addon,
+    .list__item__title {
+      @if ($size == s) {
+        @include foundations.text(m, bold);
+      }
+
+      @if ($size == m) {
+        @include foundations.text(l, bold);
+      }
+
+      @if ($size == l) {
+        @include foundations.title(m, bold);
+      }
+    }
+
+    .list__item__text {
+      @if ($size == s) {
+        @include foundations.text(s, book);
+      } @else {
+        @include foundations.text(l, book);
+      }
+    }
+
+    .list__item--emphasis-text {
+      .list__item__title {
+        @if ($size == s) {
+          @include foundations.text(s, book);
+        } @else {
+          @include foundations.text(l, book);
+        }
+
+        color: foundations.color(neutral25);
+      }
+      .list__item__text {
+        @if ($size == s) {
+          @include foundations.text(m, bold);
+        }
+
+        @if ($size == m) {
+          @include foundations.text(l, bold);
+        }
+
+        @if ($size == l) {
+          @include foundations.title(m, bold);
+        }
+
+        color: foundations.color(neutralBase);
+      }
+    }
+  }
+
+  .list--inline.list--#{$size} {
+    column-gap: foundations.spacing(foundations.get($properties, columnGap));
+  }
+
+  .list--with-divider.list--inline.list--#{$size} .list__item:not(:last-child) {
+    padding-right: foundations.spacing(foundations.get($properties, columnGap));
+  }
+}
+
+.list--inline {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.list__item {
+  counter-increment: list-counter;
+  display: grid;
+  gap: foundations.spacing(xs);
+  grid-auto-flow: column;
+  grid-template-columns: max-content;
+  margin: 0;
+  position: relative;
+
+  .list--with-divider:not(.list--inline) &:not(:last-child) {
+    border-bottom: foundations.rem(1px) solid foundations.color(neutral85);
+    padding-bottom: foundations.spacing(s);
+  }
+
+  .list--with-divider:not(.list--inline).list--s &:not(:last-child) {
+    padding-bottom: foundations.spacing(xs);
+  }
+
+  .list--with-divider.list--inline &:not(:last-child):before {
+    background-color: foundations.color(neutral85);
+    bottom: 0;
+    content: "";
+    height: foundations.rem(32px);
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: foundations.rem(1px);
+  }
+
+  .list--inline & {
+    grid-template-columns: max-content;
+  }
+}
+
+.list__item--with-addon {
+  grid-template-columns: min-content max-content;
+}
+
+.list__item--with-action {
+  justify-content: start;
+}
+
+.list__item--with-addon.list__item--with-action {
+  grid-template-columns: min-content max-content min-content;
+}
+
+.list__item__addon__icon {
+  .list--alt & {
+    color: foundations.color(neutralLight);
+  }
+}
+
+.list__item__addon img {
+  min-width: foundations.rem(48px);
+}
+
+.list__item__addon--bullet:before {
+  background-color: foundations.color(neutralBase);
+  border-radius: 50%;
+  content: "";
+  display: block;
+  margin: foundations.spacing(2xs);
+}
+
+.list__item__addon--number:before {
+  content: counter(list-counter) ".";
+  display: block;
+  min-width: foundations.rem(20px);
+  text-align: end;
+}
+
+.list__item__wrapper {
+  display: grid;
+  grid-auto-flow: row;
+  row-gap: foundations.spacing(4xs);
+
+  .list__item--inline & {
+    column-gap: foundations.spacing(2xs);
+    grid-auto-flow: column;
+  }
+}
+
+.list__item__title {
+  align-items: center;
+  color: foundations.color(neutralBase);
+
+  .list--alt & {
+    color: foundations.color(neutralLight);
+  }
+}
+
+.list__item__text {
+  color: foundations.color(neutral25);
+  margin: 0;
+
+  .list--alt & {
+    color: foundations.color(neutralLightOpacity75);
+  }
+}
+
+/* stylelint-disable selector-no-qualifying-type */
+dl.list {
+  .list__item--with-action {
+    .list__item__text {
+      align-items: center;
+      display: grid;
+      gap: foundations.spacing(xs);
+      grid-auto-flow: column;
+      justify-self: start;
+    }
+  }
+
+  .list__item__title {
+    display: grid;
+    gap: foundations.spacing(xs);
+    grid-auto-flow: column;
+    justify-content: start;
+  }
+}
+
+dl.list--item-block {
+  .list__item--with-addon {
+    grid-template-columns: none;
+  }
+}
+
+dl.list--item-inline {
+  .list__item {
+    grid-template-columns: auto 1fr;
+
+    &.list__item--with-action {
+      .list__item__text {
+        justify-self: right;
+      }
+    }
+  }
+  .list__item__text {
+    text-align: right;
+  }
+}
+/* stylelint-enable selector-no-qualifying-type */
+
+.list[data-theme="dark"] {
+  --color-action-base: #b5cfd3;
+  --color-action-dark: #e5f2f4;
+  --color-action-light: #007a92;
+  --color-alert-base: #f2e8bf;
+  --color-alert-dark: #ffc010;
+  --color-alert-light: #ffdc50;
+  --color-brand-base: #ffffff;
+  --color-brand-dark: #ffffff;
+  --color-brand-light: #ffffff;
+  --color-error-base: #f1cbd7;
+  --color-error-dark: #f8e0e8;
+  --color-error-light: #df1654;
+  --color-neutral-25: #f3f4f4;
+  --color-neutral-50: #dddee1;
+  --color-neutral-75: #c7c9cd;
+  --color-neutral-85: #595d6a;
+  --color-neutral-95: #3c3d41;
+  --color-neutral-base: #ffffff;
+  --color-neutral-light: #21283b;
+  --color-success-base: #c3e6d1;
+  --color-success-dark: #e8f2ec;
+  --color-success-light: #1d8147;
+  --color-neutral-base-opacity-15: rgba(255, 255, 255, 0.2);
+  --color-neutral-base-opacity-50: rgba(255, 255, 255, 0.6);
+}

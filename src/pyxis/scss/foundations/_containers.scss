@@ -1,0 +1,127 @@
+// Containers defines all container rules based on device width.
+
+@use "../tokens/containers" as *;
+@use "breakpoints";
+@use "lib";
+@use "sass:map";
+
+// The gutter of container
+$_gutter: lib.rem(lib.get($containers, gutter));
+
+// Fluid dimension for small sizes
+$_fluidWidth: calc(100vw - (#{$_gutter * 2}));
+
+// The fluid containers of Pyxis
+$_fluidContainers: (
+  base: $_fluidWidth,
+  2xs: $_fluidWidth,
+  xs: $_fluidWidth,
+  s: $_fluidWidth,
+);
+
+// The responsive containers of Pyxis
+$_responsiveContainers: map.merge($_fluidContainers, lib.get($containers, responsiveSize));
+
+// The fixed size containers of Pyxis
+$_fixedSizeContainers: lib.get($containers, fixedSize);
+
+// Returns the $breakpoint value from map $_responsiveContainers
+//
+// @param {String} $breakpoint - Name of breakpoint
+// @return {Number} The max-value of container in breakpoint
+// @throw {Error}
+@function _container($breakpoint) {
+  @return lib.get($_responsiveContainers, $breakpoint);
+}
+
+// Return the length of cycle
+//
+// @param {String} $breakpoint - Name of breakpoint
+// @return {Number} The length of @for cycle
+// @throw {Error}
+@function _lengthOfBreakpointCycle($breakpoint) {
+  @if lib.isNotNull($breakpoint) {
+    @return index($_responsiveContainers, $breakpoint _container($breakpoint)) - 1;
+  }
+
+  @return length($_responsiveContainers);
+}
+
+// Returns the breakpoint name
+//
+// @param {String:Null} $breakpoint - Name of breakpoint
+// @param {Number} $index - Index of breakpoint in $_responsiveContainers
+// @return {String:Null} The name of container or null
+@function _untilBreakpoint($breakpoint, $index) {
+  @if lib.isNotNull($breakpoint) {
+    @return nth(nth($_responsiveContainers, $index + 1), 1);
+  }
+
+  @return null;
+}
+
+// Include the base property for container
+@mixin _baseContainerProperty {
+  margin: 0 auto;
+  width: 100%;
+}
+
+// Include a container by `$fromBreakpoint` to `$toBreakpoint` value,
+// outside the indicated breakpoints the container will be fluid.
+// The container is based on `display: grid;` property.
+//
+// @param {String} $fromBreakpoint [base] - Name of start breakpoint
+// @param {String} $toBreakpoint [null] - Name of end breakpoint
+//
+// @throw Error if `$fromBreakpoint` value is lower or equal to `$untilBreakpoint` value
+@mixin containerResponsive($fromBreakpoint: base, $untilBreakpoint: null) {
+  @include _baseContainerProperty;
+
+  @if (
+    lib.isNotNull($untilBreakpoint) and
+      breakpoints.isGreaterOrEqualTo($fromBreakpoint, $untilBreakpoint)
+  ) {
+    @error "You cannot use a `$untilBreakpoint` value smaller or equal than `$fromBreakpoint` value";
+  }
+
+  $_indexFromBreakpoint: index($_responsiveContainers, $fromBreakpoint _container($fromBreakpoint));
+
+  @for $i from $_indexFromBreakpoint through _lengthOfBreakpointCycle($untilBreakpoint) {
+    $_containerFromBreakpoint: nth(nth($_responsiveContainers, $i), 1);
+
+    @include breakpoints.mq($_containerFromBreakpoint, _untilBreakpoint($untilBreakpoint, $i)) {
+      max-width: _container($_containerFromBreakpoint);
+    }
+  }
+}
+
+// Include a container with a fixed max-width after the `xsmall` breakpoint
+//
+// @param {String} $size - Name of size
+@mixin containerWithFixedSize($size) {
+  @include _baseContainerProperty;
+  max-width: _container(base);
+
+  @include breakpoints.mq(xs) {
+    max-width: min(calc(100vw - #{$_gutter * 2}), #{lib.get($_fixedSizeContainers, $size)});
+  }
+}
+
+// Create atom classes for containers
+@mixin createAtoms() {
+  .container-responsive {
+    @include containerResponsive();
+  }
+
+  @each $breakpoint, $value in map-remove($_responsiveContainers, base) {
+    .container-responsive-from-#{$breakpoint} {
+      @include containerResponsive($breakpoint);
+    }
+  }
+
+  @each $size, $_ in $_fixedSizeContainers {
+    .container-#{$size} {
+      @include containerWithFixedSize($size);
+    }
+  }
+}

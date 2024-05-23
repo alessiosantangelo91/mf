@@ -1,0 +1,13 @@
+// Configuration is the only part of Pyxis which can be overridden by final user.
+
+// Font size root
+$fontSizeRoot: 16px !default;
+
+// Font display settings
+$fontDisplay: swap !default;
+
+// Scrollbar width
+$scrollBarWidth: 10px !default;
+
+// Add @font-face to the bundle
+$addFontFace: true !default;

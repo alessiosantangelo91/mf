@@ -1,0 +1,54 @@
+@use "../../../foundations";
+@use "../mixins";
+@use "../variables";
+
+.form-control {
+  @include foundations.text(m, book, neutral25);
+  align-items: start;
+  column-gap: foundations.spacing(xs);
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: variables.$controlSize auto;
+  justify-items: start;
+  position: relative;
+  user-select: none;
+}
+
+.form-control--disabled {
+  color: foundations.color(neutral50);
+  cursor: not-allowed;
+}
+
+.form-control-group {
+  @include foundations.responsiveSpacing("column-gap", l, $fromMedium: xl, $fromLarge: 2xl);
+  align-content: center;
+  display: grid;
+  grid-auto-flow: column;
+  justify-content: start;
+  position: relative;
+  row-gap: foundations.spacing(4xs);
+  width: 100%;
+
+  @include mixins.elementInsideMultiColumnsRow {
+    min-height: variables.$fieldHeight + variables.$borderWidth * 2;
+  }
+
+  @include mixins.elementInsideMultiColumnsRow(':has([class$="--s"])') {
+    min-height: variables.$fieldHeightSmall + variables.$borderWidth * 2;
+  }
+}
+
+.form-control-group--column {
+  grid-auto-flow: row;
+  min-height: unset;
+  row-gap: foundations.spacing(xs);
+}
+
+.form-control-option {
+  display: grid;
+  row-gap: foundations.spacing(4xs);
+}
+
+.form-control__text {
+  display: inline-block;
+}

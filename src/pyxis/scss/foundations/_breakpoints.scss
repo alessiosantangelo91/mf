@@ -1,0 +1,95 @@
+// Breakpoints define a small set of function used to adjust your
+// style based on device width.
+
+@use "../tokens/breakpoints" as *;
+@use "lib";
+
+// Breakpoint bounding difference
+$_boundDiff: 1px;
+
+// Returns the `$breakpoint` value from token map `$breakpoints`
+// based on the key in input.
+//
+// @param {String} $breakpoint - Name of breakpoint
+// @return {Number} The minimum value in which the breakpoint will be triggered
+@function breakpoint($breakpoint) {
+  @return lib.get($breakpoints, $breakpoint);
+}
+
+// Check if the breakpoint is `base`.
+//
+// @param {String} $breakpoint - Name of breakpoint
+// @return {Boolean}
+@function isBase($breakpoint) {
+  @return $breakpoint == base;
+}
+
+// Check if breakpoint is strictly greater than the second one passed as input.
+//
+// @param {String} $breakpoint - Name of breakpoint
+// @param {String} $lowerBound - Name of breakpoint to compare with
+// @return {Boolean}
+@function isGreaterThan($breakpoint, $lowerBound) {
+  @return breakpoint($breakpoint) > breakpoint($lowerBound);
+}
+
+// Check if a breakpoint is strictly lower than the second one passed as input.
+//
+// @param {String} $breakpoint - Name of breakpoint
+// @param {String} $upperBound - Name of breakpoint to compare with
+// @return {Boolean}
+@function isLowerThan($breakpoint, $upperBound) {
+  @return breakpoint($breakpoint) < breakpoint($upperBound);
+}
+
+// Check if two breakpoints are equal.
+//
+// @param {String} $breakpoint - Name of breakpoint
+// @param {String} $otherTerm - Name of breakpoint to compare with
+// @return {Boolean}
+@function isEqualTo($breakpoint, $otherTerm) {
+  @return breakpoint($breakpoint) == breakpoint($otherTerm);
+}
+
+// Check if breakpoint is greater than or equal to the second one passed as input.
+//
+// @param {String} $breakpoint - Name of breakpoint
+// @param {String} $upperBound - Name of breakpoint to compare with
+// @return {Boolean}
+@function isGreaterOrEqualTo($breakpoint, $upperBound) {
+  @return isGreaterThan($breakpoint, $upperBound) or isEqualTo($breakpoint, $upperBound);
+}
+
+// Check if breakpoint is lower than or equal to the second one passed as input.
+//
+// @param {String} $breakpoint - Name of breakpoint
+// @param {String} $lowerBound - Name of breakpoint to compare with
+// @return {Boolean}
+@function isLowerOrEqualTo($breakpoint, $lowerBound) {
+  @return isLowerThan($breakpoint, $lowerBound) or isEqualTo($breakpoint, $lowerBound);
+}
+
+// Wraps `@content` inside a media-query with a `min-width` and `max-width` (optional).
+//
+// @param {String} $from - Name of breakpoint
+// @param {String | Null} $until [null] - Name of breakpoint
+//
+// @throw Error if `$from` value is lower or equal to `$until` value
+@mixin mq($from, $until: null) {
+  $mediaQuery: "screen and (min-width: #{breakpoint($from)})";
+
+  @if isBase($from) and lib.isNull($until) {
+    @content;
+  } @else {
+    @if $until {
+      @if breakpoint($until) > breakpoint($from) {
+        $mediaQuery: "#{$mediaQuery} and (max-width: #{breakpoint($until) - $_boundDiff})";
+      } @else {
+        @error "You cannot use a `$until` value smaller or equal than `$from` value";
+      }
+    }
+    @media #{$mediaQuery} {
+      @content;
+    }
+  }
+}

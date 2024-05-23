@@ -1,0 +1,195 @@
+@use "../../foundations";
+@use "../../components/mixins" as componentsMixins;
+@use "variables" as formVariables;
+@use "mixins";
+
+$_wrapperAnimationOffset: foundations.rem(10px);
+
+.form-dropdown-wrapper {
+  @include foundations.elevation(s, action15);
+  @include foundations.radius(xs);
+  @include componentsMixins.customScrollbar();
+
+  border: formVariables.$borderWidth solid foundations.color(actionBase);
+  left: -#{formVariables.$borderWidth};
+  opacity: 0;
+  outline: transparent solid foundations.$outlineWidth;
+  padding-top: formVariables.$fieldHeight - $_wrapperAnimationOffset;
+  position: absolute;
+  right: -#{formVariables.$borderWidth};
+  top: -#{formVariables.$borderWidth};
+  transition-duration: foundations.duration(fastest);
+  transition-property: opacity, outline-color, padding-top, visibility;
+  transition-timing-function: foundations.timing(exit);
+  visibility: hidden;
+  will-change: opacity, outline-color, padding-top;
+  z-index: 1;
+
+  @include foundations.onSafari {
+    outline: none;
+  }
+
+  .form-field--with-opened-dropdown & {
+    @include mixins.safariFocusAsShadow(foundations.color(actionBaseOpacity20));
+    opacity: 1;
+    outline-color: foundations.color(actionBaseOpacity20);
+    padding-top: formVariables.$fieldHeight;
+    transition-timing-function: foundations.timing(entrance);
+    visibility: visible;
+  }
+
+  .form-field--error.form-field--with-opened-dropdown & {
+    @include mixins.safariFocusAsShadow(foundations.color(errorBaseOpacity20));
+    border-color: foundations.color(errorBase);
+    outline-color: foundations.color(errorBaseOpacity20);
+  }
+}
+
+.form-dropdown-wrapper--s {
+  padding-top: formVariables.$fieldHeightSmall - $_wrapperAnimationOffset;
+
+  .form-field--with-opened-dropdown & {
+    padding-top: formVariables.$fieldHeightSmall;
+  }
+
+  .form-dropdown__suggestion__icon {
+    .icon {
+      height: foundations.rem(20px);
+      width: foundations.rem(20px);
+    }
+  }
+}
+
+.form-dropdown {
+  $maxHeight: foundations.rem(208px);
+  $maxHeightSmall: foundations.rem(172px);
+  $radius: 0 0 foundations.rem(6px) foundations.rem(6px);
+
+  background-color: foundations.color(neutralLight);
+  border-radius: $radius;
+  border-top: foundations.rem(1px) solid foundations.color(neutral85);
+  cursor: default;
+  display: grid;
+  max-height: $maxHeight;
+  overflow-x: hidden;
+  padding: foundations.spacing(3xs 2xs);
+  position: relative;
+  row-gap: foundations.spacing(4xs);
+
+  .form-dropdown-wrapper--s & {
+    max-height: $maxHeightSmall;
+    padding: foundations.spacing(3xs);
+  }
+}
+
+.form-dropdown--with-header {
+  padding-top: 0;
+}
+
+.form-dropdown__item,
+.form-dropdown__no-results {
+  @include foundations.radius(xs);
+  align-items: center;
+  color: foundations.color(neutral25);
+  cursor: pointer;
+  display: grid;
+  outline: none;
+  padding: foundations.spacing(2xs);
+  transition: none;
+  user-select: none;
+
+  .form-dropdown-wrapper--s & {
+    padding-bottom: foundations.spacing(3xs);
+    padding-top: foundations.spacing(3xs);
+  }
+}
+
+.form-dropdown__item--active {
+  @include foundations.fontWeight(bold);
+  background-color: foundations.color(actionLight);
+  color: foundations.color(actionBase);
+}
+
+.form-dropdown__item--hover {
+  background-color: foundations.color(neutral95);
+}
+
+.form-dropdown__no-results {
+  cursor: default;
+  gap: foundations.spacing(2xs);
+}
+
+.form-dropdown__no-results__action {
+  align-items: center;
+  border-top: foundations.rem(1px) solid foundations.color(neutral85);
+  display: grid;
+  height: 100%;
+  justify-items: start;
+  padding-top: foundations.spacing(2xs);
+  position: relative;
+}
+
+.form-dropdown__suggestion {
+  align-items: center;
+  column-gap: foundations.spacing(s);
+  display: grid;
+  grid-auto-columns: max-content;
+  grid-auto-flow: column;
+  padding: foundations.spacing(3xs 2xs);
+
+  .form-dropdown-wrapper--s & {
+    column-gap: foundations.spacing(2xs);
+  }
+}
+
+.form-dropdown__suggestion__wrapper {
+  color: foundations.color(neutralBase);
+  display: grid;
+  row-gap: foundations.spacing(4xs);
+
+  .form-dropdown-wrapper--s & {
+    row-gap: unset;
+  }
+}
+
+.form-dropdown__suggestion__title {
+  @include foundations.text(l, bold);
+
+  .form-dropdown-wrapper--s & {
+    @include foundations.text(m, bold);
+  }
+}
+
+.form-dropdown__suggestion__subtitle {
+  @include foundations.text(m, book);
+  color: foundations.color(neutral25);
+
+  .form-dropdown-wrapper--s & {
+    @include foundations.text(s, book);
+  }
+}
+
+.form-dropdown__suggestion__icon {
+  .icon {
+    height: foundations.rem(24px);
+    width: foundations.rem(24px);
+  }
+}
+
+.form-dropdown__header {
+  @include foundations.text(s, book, neutral25);
+  background-color: foundations.color(neutralLight);
+  padding: foundations.spacing(3xs 2xs);
+  position: sticky;
+  top: calc(-1 * #{foundations.spacing(3xs)});
+
+  &:after {
+    background-color: foundations.color(neutral85);
+    bottom: 0;
+    content: "";
+    height: foundations.rem(1px);
+    left: foundations.spacing(2xs);
+    position: absolute;
+    right: foundations.spacing(2xs);
+  }
+}

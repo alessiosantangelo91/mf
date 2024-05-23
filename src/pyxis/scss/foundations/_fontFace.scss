@@ -1,0 +1,40 @@
+// Define the Font Faces.
+
+@use "../config";
+@use "lib";
+
+// The font path
+$_fontPath: "https://d3be8952cnveif.cloudfront.net/fonts";
+
+// The font setting map
+// The `ss08` featureSettings allows to make numbers tall as uppercase letters
+$config: (
+  name: "CircularXXWeb",
+  fallback: "Arial, sans-serif",
+  featureSettings: "ss08" on,
+  weights: (
+    book: 400,
+    bold: 700,
+  ),
+);
+
+// Create `@font-face` for all fonts available in `$_fonts` map.
+@mixin _fontFaces() {
+  @each $name, $weight in lib.get($config, weights) {
+    $fileName: #{lib.get($config, name)}-#{lib.capitalize($name)};
+
+    @font-face {
+      font-display: config.$fontDisplay;
+      font-family: lib.get($config, name);
+      font-style: normal;
+      font-weight: $weight;
+      src: url("#{$_fontPath}/#{$fileName}.woff") format("woff"),
+        url("#{$_fontPath}/#{$fileName}.woff2") format("woff2");
+    }
+  }
+}
+
+@if (config.$addFontFace) {
+  // Generate @font-face
+  @include _fontFaces();
+}

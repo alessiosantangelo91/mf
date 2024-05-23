@@ -1,0 +1,9 @@
+@use "../config";
+@use "../foundations/lib";
+
+// Class for `html` tag when a fixed element is open.
+.scroll-locked {
+  overflow: hidden;
+  padding-right: lib.rem(config.$scrollBarWidth);
+  touch-action: none;
+}

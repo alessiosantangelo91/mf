@@ -1,0 +1,16 @@
+@use "../../foundations";
+
+@forward "card";
+@forward "controls";
+@forward "dropdown";
+@forward "fields";
+@forward "item";
+@forward "label";
+@forward "legend";
+@forward "textSwitch";
+@forward "toggle";
+
+.form {
+  @include foundations.responsiveSpacing("row-gap", 2xl, $fromMedium: 3xl, $fromLarge: 4xl);
+  display: grid;
+}

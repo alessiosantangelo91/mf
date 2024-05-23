@@ -1,0 +1,49 @@
+// !!! IMPORTANT !!!
+//
+// Always use a BEM notation for µfrontend specific classes.
+
+@use './../../pyxis/scss/pyxis.scss' as pyxis;
+
+:host {
+  display: block;
+}
+
+.swc-wrapper {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-gap: pyxis.spacing(m); 
+  text-align: center;
+  padding: pyxis.spacing(xl);
+}
+
+.swc-character {
+  @include pyxis.elevation(m, neutral40);
+  background-color: pyxis.color(neutral95);
+  display: block;
+  padding: pyxis.spacing(m);
+  border-radius: pyxis.radius(m);
+  border: pyxis.rem(2px) solid;
+  border-color: pyxis.color(brandBaseOpacity40);
+}
+
+.swc-character__name,
+.swc-character__birth,
+.swc-character__profile {
+  margin: 0 auto;
+}
+
+.swc-character__name {
+  @include pyxis.title(m, bold);
+  display: block;
+  color: pyxis.color(brandBase);
+}
+
+.swc-character__birth,
+.swc-character__profile {
+  @include pyxis.text(m, book);
+  display: block;
+}
+
+.swc-character__birth {
+  color: pyxis.color(neutral25);
+}

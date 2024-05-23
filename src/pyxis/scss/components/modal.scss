@@ -1,0 +1,290 @@
+@use "../foundations";
+@use "mixins";
+@use "animations";
+
+// Allowed sizes of modals
+$_sizes: (s, m, l);
+
+// Allowed sizes of modals depending on breakpoints
+$_sizesOnBp: (
+  xs: foundations.rem(500px),
+  m: foundations.rem(800px),
+  l: foundations.rem(1000px),
+);
+
+.modal-backdrop {
+  @include foundations.fixed;
+  @include foundations.hideScrollbar;
+  align-items: end;
+  animation: fadeIn foundations.duration(fast) foundations.timing(entrance) forwards;
+  background-color: foundations.color(neutralBaseOpacity50);
+  display: grid;
+  grid-template-rows: 0 [modal] auto;
+  justify-items: center;
+  will-change: opacity, visibility;
+  z-index: foundations.zIndex(modal);
+
+  @include foundations.mq(xs) {
+    align-items: start;
+  }
+}
+
+.modal-backdrop--closing {
+  animation: fadeOut foundations.duration(fast) foundations.timing(entrance) forwards;
+}
+
+.modal-backdrop--with-transition {
+  animation: none;
+  opacity: 0;
+  pointer-events: none;
+  transition-duration: foundations.duration(fast);
+  transition-property: opacity, visibility;
+  transition-timing-function: foundations.timing(entrance);
+  visibility: hidden;
+
+  &.modal-backdrop--show {
+    opacity: 1;
+    pointer-events: all;
+    visibility: visible;
+  }
+}
+
+.modal-close {
+  @include foundations.absolute;
+
+  @include foundations.mq(xs) {
+    height: 100vh;
+    position: sticky;
+    width: 100vw;
+  }
+}
+
+.modal {
+  $minHeight: foundations.rem(140px);
+  $offset: foundations.rem(80px);
+  animation-fill-mode: forwards;
+
+  animation-timing-function: foundations.timing(entrance);
+  display: grid;
+
+  @include foundations.mq(base, xs) {
+    @include foundations.fixed($top: initial);
+    @include foundations.hideScrollbar;
+    @include foundations.radius(m, top);
+    animation-duration: foundations.duration(base);
+    animation-name: slideInFromBottom, fadeIn;
+    background-color: foundations.color(neutralLight);
+    grid-auto-rows: min-content;
+    height: min-content;
+    max-height: calc(100% - #{foundations.spacing(2xl)});
+    max-height: calc(100dvh - #{foundations.spacing(2xl)});
+    min-height: $minHeight;
+    width: 100%;
+    will-change: opacity, transform;
+  }
+
+  @include foundations.mq(xs) {
+    @include foundations.radius(xl);
+    animation-duration: foundations.duration(fast);
+    animation-name: modalEnter;
+    background-color: foundations.color(neutralLight);
+    grid-row-start: modal;
+    height: min-content;
+    margin: $offset 0;
+    min-height: $minHeight;
+    width: 100%;
+    will-change: opacity, transform;
+  }
+
+  .modal-backdrop--closing & {
+    @include foundations.mq(base, xs) {
+      animation-name: slideOutFromBottom, fadeOut;
+    }
+    @include foundations.mq(xs) {
+      animation-name: modalExit;
+    }
+  }
+
+  .modal-backdrop--with-transition & {
+    animation: none;
+
+    @include foundations.mq(base, xs) {
+      transform: translateY(100%);
+      transition-duration: foundations.duration(base);
+      transition-property: opacity, transform;
+      transition-timing-function: foundations.timing(entrance);
+    }
+    @include foundations.mq(xs) {
+      opacity: 0;
+      transform: scale(0.9) translateY(10%);
+      transition-duration: foundations.duration(fast);
+      transition-property: opacity, transform;
+      transition-timing-function: foundations.timing(entrance);
+    }
+  }
+
+  .modal-backdrop--with-transition.modal-backdrop--show & {
+    transform: translateY(0);
+
+    @include foundations.mq(xs) {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+}
+
+// Generate size classes
+@each $size in $_sizes {
+  .modal--#{$size} {
+    @each $bp, $value in $_sizesOnBp {
+      @if foundations.isLowerOrEqualTo($bp, $size) {
+        @include foundations.mq($bp) {
+          max-width: $value;
+        }
+      }
+    }
+  }
+}
+
+.modal--center {
+  @include foundations.mq(xs) {
+    place-self: center;
+  }
+}
+
+.modal__header {
+  @include foundations.radius(xl, top);
+  @include foundations.responsiveSpacing("column-gap", xs, $fromXSmall: s);
+  @include foundations.responsiveSpacing("padding", m m xs, $fromXSmall: xl xl s);
+  background: foundations.color(neutralLight);
+  display: grid;
+  grid-template-columns: auto max-content;
+  height: fit-content;
+  z-index: 1;
+
+  @include foundations.mq(base, xs) {
+    @include foundations.sticky;
+  }
+}
+
+.modal__header__wrapper {
+  align-items: center;
+  column-gap: foundations.spacing(s);
+  display: grid;
+  grid-template-areas: "badge badge";
+  justify-content: start;
+  justify-items: start;
+  row-gap: foundations.spacing(2xs);
+}
+
+.modal__header__badge {
+  grid-area: badge;
+}
+
+.modal__header__title {
+  @include foundations.title(s, bold, neutralBase);
+}
+
+.modal__content {
+  @include foundations.responsiveSpacing("padding", 3xs m xs, $fromXSmall: 3xs xl xs);
+
+  &:last-child {
+    @include foundations.responsiveSpacing("padding-bottom", m, $fromXSmall: xl);
+  }
+}
+
+.modal__footer {
+  @include foundations.responsiveSpacing("padding", m, $fromXSmall: m xl xl);
+  @include foundations.responsiveSpacing("gap", xs, $fromXSmall: s);
+  align-items: center;
+  background: foundations.color(neutralLight);
+  display: grid;
+  grid-auto-flow: column;
+  z-index: 1;
+
+  @include foundations.mq(base, xs) {
+    @include foundations.sticky;
+  }
+
+  @include foundations.mq(xs) {
+    @include foundations.radius(xl, bottom);
+  }
+}
+
+.modal__footer--alt {
+  background-color: foundations.color(neutralBase);
+  color: foundations.color(neutralLight);
+}
+
+.modal__footer__text {
+  flex: 1;
+}
+
+.modal__footer__buttons {
+  @include foundations.responsiveSpacing("gap", xs, $fromXSmall: s);
+  align-items: center;
+  display: grid;
+  gap: foundations.spacing(xs);
+  grid-auto-flow: column;
+  height: fit-content;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.modal__footer__buttons--full-width {
+  @include foundations.mq(base, xs) {
+    grid-auto-flow: row;
+    grid-template-columns: 1fr;
+
+    .button {
+      width: auto;
+    }
+  }
+
+  .button:first-child:not(:only-child) {
+    @include foundations.mq(base, xs) {
+      grid-row: end;
+    }
+  }
+}
+
+.modal__header--sticky,
+.modal__footer--sticky {
+  @include foundations.mq(xs) {
+    @include foundations.sticky(
+      $top: calc(#{foundations.spacing(xs)} * -1),
+      $bottom: calc(#{foundations.spacing(xs)} * -1)
+    );
+  }
+}
+
+.modal__header__wrapper--custom,
+.modal__footer--custom {
+  align-items: unset;
+  gap: unset;
+  grid-template-areas: none;
+  justify-content: unset;
+  justify-items: unset;
+}
+
+@keyframes modalEnter {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(10%);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0%);
+  }
+}
+
+@keyframes modalExit {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0%);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.9) translateY(10%);
+  }
+}

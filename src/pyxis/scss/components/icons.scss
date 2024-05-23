@@ -1,0 +1,58 @@
+@use "../foundations";
+@use "animations";
+
+$_size: (
+  s: 16px,
+  m: 20px,
+  l: 24px,
+);
+
+$_paddingBasedOnSize: (
+  s: xs,
+  m: s,
+  l: m,
+);
+
+$_variants: (brand, alert, success, error);
+
+// Add background-color and color to icon.
+//
+// @param {Color} $background - Background color name
+// @param {Color} $icon - Color name
+@mixin _setColors($background, $icon) {
+  background-color: foundations.color($background);
+  color: foundations.color($icon);
+}
+
+.icon {
+  display: block;
+}
+
+.icon--boxed {
+  @include foundations.radius(m);
+  @include _setColors(neutral95, neutral25);
+  box-sizing: content-box;
+  display: flex;
+  place-items: center;
+
+  @each $variant in $_variants {
+    &.icon--#{$variant} {
+      @include _setColors(#{$variant}Light, if($variant == "alert", neutral25, #{$variant}Base));
+    }
+  }
+
+  &.icon--alt {
+    @include _setColors(neutralLight, brandBase);
+  }
+}
+
+@each $sizeName, $sizeValue in $_size {
+  .icon--size-#{$sizeName} {
+    height: foundations.rem($sizeValue);
+    width: foundations.rem($sizeValue);
+
+    &.icon--boxed {
+      padding: foundations.spacing(foundations.get($_paddingBasedOnSize, $sizeName));
+    }
+  }
+}
