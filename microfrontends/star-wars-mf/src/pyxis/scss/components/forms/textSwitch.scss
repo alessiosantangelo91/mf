@@ -1,0 +1,139 @@
+@use "../../foundations";
+
+$_textSwitchHeight: foundations.rem(28px);
+
+.text-switch-wrapper {
+  display: grid;
+  justify-items: center;
+  row-gap: foundations.spacing(2xs);
+  width: fit-content;
+}
+
+.text-switch-wrapper--top-left-label {
+  justify-items: start;
+}
+
+.text-switch-wrapper--left-label {
+  align-items: center;
+  column-gap: foundations.spacing(s);
+  grid-auto-flow: column;
+}
+
+.text-switch {
+  @include foundations.radius(m);
+  background-color: foundations.color(neutral95);
+  column-gap: foundations.spacing(3xs);
+  display: grid;
+  grid-auto-flow: column;
+  padding: foundations.spacing(3xs);
+  position: relative;
+  width: fit-content;
+
+  .text-switch-wrapper--alt & {
+    background-color: foundations.color(neutral95Opacity15);
+  }
+}
+
+.text-switch--equal-option-width {
+  grid-auto-columns: 1fr;
+  text-align: center;
+}
+
+.text-switch__label {
+  @include foundations.text(m, book, neutralBase);
+
+  .text-switch-wrapper--alt & {
+    color: foundations.color(neutralLight);
+  }
+}
+
+.text-switch__option {
+  cursor: pointer;
+  display: grid;
+  user-select: none;
+  z-index: 1;
+
+  .text-switch--equal-option-width & {
+    width: 100%;
+  }
+}
+
+.text-switch__option-label {
+  @include foundations.text(m, bold);
+  align-items: center;
+  color: foundations.color(neutral25);
+  display: grid;
+  grid-area: -1/1;
+  height: $_textSwitchHeight;
+  padding: foundations.spacing(0 xs);
+  transition-duration: foundations.duration(fast);
+  transition-property: color;
+  transition-timing-function: foundations.timing(base);
+
+  .text-switch-wrapper--alt & {
+    color: foundations.color(neutralLight);
+  }
+
+  .text-switch__option--checked & {
+    color: foundations.color(actionBase);
+
+    &:hover {
+      color: foundations.color(actionDark);
+    }
+  }
+}
+
+.text-switch__option-input {
+  @include foundations.radius(m);
+  @include foundations.focus(actionBase, $radiusSize: l);
+  background-color: transparent;
+  grid-area: -1/1;
+  height: auto;
+  transition-duration: foundations.duration(fast);
+  transition-property: background-color;
+  transition-timing-function: foundations.timing(base);
+  width: auto;
+
+  &:hover {
+    background-color: foundations.color(neutralLightOpacity75);
+  }
+
+  .text-switch-wrapper--alt & {
+    @include foundations.focus(neutralLight);
+
+    &:hover {
+      background-color: foundations.color(neutralLightOpacity15);
+    }
+  }
+
+  //@TODO: delete this class when Elm module will be complete
+  .text-switch__option--checked-no-transition & {
+    @include foundations.elevation(s, neutral15);
+    background-color: foundations.color(neutralLight);
+  }
+
+  //@TODO: delete this class when Elm module will be complete
+  .text-switch-wrapper--alt .text-switch__option--checked-no-transition & {
+    background-color: foundations.color(neutralLight);
+    box-shadow: none;
+  }
+}
+
+.text-switch__slider {
+  $offset: foundations.spacing(3xs);
+
+  @include foundations.radius(m);
+  @include foundations.elevation(s, neutral15);
+  background-color: foundations.color(neutralLight);
+  height: calc(100% - #{$offset} * 2);
+  left: $offset;
+  position: absolute;
+  top: $offset;
+  transition-duration: foundations.duration(base);
+  transition-property: transform, width;
+  transition-timing-function: foundations.timing(base);
+
+  .text-switch-wrapper--alt & {
+    box-shadow: none;
+  }
+}

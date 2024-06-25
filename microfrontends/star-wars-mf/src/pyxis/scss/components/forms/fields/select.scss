@@ -1,0 +1,48 @@
+@use "../../../foundations";
+@use "../variables";
+
+.form-field__select {
+  @include foundations.text(l, book);
+  color: foundations.color(neutral50);
+  cursor: pointer;
+  height: variables.$fieldHeight;
+  overflow: hidden;
+  padding-left: foundations.spacing(s);
+  text-overflow: ellipsis;
+  user-select: none;
+  white-space: nowrap;
+  width: variables.$fieldWidth;
+
+  @include foundations.onFirefox {
+    text-indent: foundations.rem(-2px);
+  }
+}
+
+.form-field__select--with-grid-layout {
+  display: grid;
+  grid-column: 1/3;
+  grid-row: 1;
+}
+
+.form-field__select--filled {
+  color: foundations.color(neutralBase);
+}
+
+.form-field__select--s {
+  height: variables.$fieldHeightSmall;
+  padding-left: foundations.spacing(xs);
+  width: variables.$fieldWidthSmall;
+}
+
+.form-field__select--native {
+  padding-right: variables.$fieldHeight;
+  width: 100%;
+
+  &.form-field__select--s {
+    padding-right: variables.$fieldHeightSmall;
+  }
+}
+
+.form-field__select--with-no-pointer-events {
+  pointer-events: none;
+}

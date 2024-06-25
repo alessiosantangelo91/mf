@@ -1,0 +1,76 @@
+@use "string";
+
+// Utilities for SCSS maps.
+
+// Retrieve the value corresponding to
+// the key in a given map.
+//
+// @param {Map} $map - A map
+// @param {Args} $keys - Keys in map
+// @return {Sass::Script::Value::Base} The corresponding value
+//
+// @throw Error if `$keys` is not in map.
+@function get($map, $keys...) {
+  @each $key in $keys {
+    @if not map-has-key($map, $key) {
+      @error "Unknown key `#{$keys}` in map";
+    }
+    $map: map-get($map, $key);
+  }
+
+  @return $map;
+}
+
+// Return the key corresponding to the index in input
+// in a given map.
+//
+// @param {Number} $index - The index
+// @param {Map} $map - A map
+// @return {String} The corresponding key
+@function indexToKey($index, $map) {
+  $keys: map-keys($map);
+  @return nth($keys, $index);
+}
+
+// Return the key of the element with the
+// index following the item in input in a given map.
+//
+// @param {Map} $map - A map
+// @param {String} $currentItem - The current item (Key value)
+// @return {String:Null} The corresponding key or null
+//
+// @throw Error if `$currentItem` is not in map.
+@function getNextElementKey($map, $currentItem) {
+  $currentIndex: index($map, $currentItem);
+  @if $currentIndex {
+    $nextElementIndex: $currentIndex + 1;
+    @if ($currentIndex != length($map)) {
+      @return indexToKey($nextElementIndex, $map);
+    } @else {
+      @return null;
+    }
+  }
+  @error "Unknown key `#{$currentItem}` in map";
+}
+
+// Check if the key exists in map
+// and return the css variable.
+//
+// @param {String} $category - The category prefix of the css variable
+// @param {Map} $map - A map
+// @param {Args} $keys - Keys in map
+// @return {Sass::Script::Value::Base} The full css variable
+//
+// @throw Error if `$keys` is not in map.
+@function getCSSVariable($category, $map, $keys...) {
+  $variableName: "";
+
+  @each $key in $keys {
+    @if not map-has-key($map, $key) {
+      @error "Unknown key `#{$keys}` in map";
+    }
+    $variableName: $key;
+  }
+
+  @return var(--#{$category}-#{string.camelToKebabCase(string.numberToString($variableName))});
+}

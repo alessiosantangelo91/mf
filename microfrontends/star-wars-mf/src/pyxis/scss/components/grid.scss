@@ -1,0 +1,134 @@
+@use "sass:map";
+@use "../foundations";
+@use "../tokens/breakpoints" as breakpoints;
+@use "../tokens/spacings" as spacings;
+
+$_maxColumnSpan: 12;
+$_minColumnWidth: foundations.rem(65px);
+$_smallRowWidth: foundations.rem(360px);
+$_largeRowWidth: foundations.rem(720px);
+$_spacingWithZero: map.merge(
+  (
+    0: 0,
+  ),
+  spacings.$spacings
+);
+
+.grid {
+  display: grid;
+  justify-items: center;
+  row-gap: foundations.spacing(m);
+  width: 100%;
+}
+
+@each $spacingName, $spacingValue in $_spacingWithZero {
+  .grid--gap-#{$spacingName} {
+    row-gap: foundations.spacing($spacingName);
+  }
+}
+
+@each $breakpointName, $breakpointValue in breakpoints.$breakpoints {
+  @if (not foundations.isBase($breakpointName)) {
+    @each $spacingName, $spacingValue in $_spacingWithZero {
+      .grid--gap-#{$spacingName}-from-#{$breakpointName} {
+        @include foundations.mq($breakpointName) {
+          row-gap: foundations.spacing($spacingName);
+        }
+      }
+    }
+  }
+}
+
+.grid--full-height {
+  height: 100%;
+}
+
+.grid__row {
+  display: grid;
+  gap: foundations.spacing(l);
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+  max-width: 100%;
+  width: 100%;
+}
+
+.grid__row--m {
+  @include foundations.containerWithFixedSize(m);
+
+  @include foundations.mq(s) {
+    grid-template-columns: unset;
+  }
+}
+
+.grid__row--s {
+  @include foundations.containerWithFixedSize(s);
+
+  @include foundations.mq(s) {
+    grid-template-columns: unset;
+  }
+}
+
+@each $spacingName, $spacingValue in $_spacingWithZero {
+  .grid__row--gap-#{$spacingName} {
+    gap: foundations.spacing($spacingName);
+  }
+}
+
+@each $breakpointName, $breakpointValue in breakpoints.$breakpoints {
+  @if (not foundations.isBase($breakpointName)) {
+    .grid__row--from-#{$breakpointName} {
+      grid-auto-flow: row;
+
+      @include foundations.mq($breakpointName) {
+        grid-auto-flow: column;
+      }
+    }
+
+    @each $spacingName, $spacingValue in $_spacingWithZero {
+      .grid__row--gap-#{$spacingName}-from-#{$breakpointName} {
+        @include foundations.mq($breakpointName) {
+          gap: foundations.spacing($spacingName);
+        }
+      }
+    }
+  }
+}
+
+.grid__row__column {
+  grid-column: auto;
+  word-break: break-word;
+}
+
+@for $i from 1 through $_maxColumnSpan {
+  .grid__row__column--span-#{$i} {
+    grid-column: auto / span $i;
+  }
+}
+
+@for $i from 0 through $_maxColumnSpan {
+  .grid__row__column--order-#{$i} {
+    order: $i;
+  }
+}
+
+@each $breakpointName, $breakpointValue in breakpoints.$breakpoints {
+  @for $i from 1 through $_maxColumnSpan {
+    @if (not foundations.isBase($breakpointName)) {
+      .grid__row__column--span-#{$i}-from-#{$breakpointName} {
+        @include foundations.mq($breakpointName) {
+          grid-column: auto / span $i;
+        }
+      }
+    }
+  }
+
+  @for $i from 0 through $_maxColumnSpan {
+    @if (not foundations.isBase($breakpointName)) {
+      .grid__row__column--order-#{$i}-from-#{$breakpointName} {
+        @include foundations.mq($breakpointName) {
+          order: $i;
+        }
+      }
+    }
+  }
+}

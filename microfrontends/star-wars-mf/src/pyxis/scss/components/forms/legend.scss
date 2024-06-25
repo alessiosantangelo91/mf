@@ -1,0 +1,52 @@
+@use "../../foundations";
+
+.form-legend {
+  display: grid;
+  justify-items: start;
+  text-align: left;
+  width: 100%;
+
+  @include foundations.mq(xs) {
+    justify-items: center;
+    text-align: center;
+  }
+}
+
+.form-legend--align-left {
+  @include foundations.mq(xs) {
+    justify-items: start;
+    text-align: left;
+  }
+}
+
+.form-legend__addon {
+  margin-bottom: foundations.spacing(xs);
+
+  @include foundations.onSafari {
+    display: block;
+    width: fit-content;
+  }
+
+  @include foundations.mq(xs) {
+    margin-bottom: foundations.spacing(s);
+
+    @include foundations.onSafari {
+      .form-legend:not(.form-legend--align-left) & {
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+  }
+}
+
+.form-legend__title {
+  @include foundations.title(m, bold);
+  color: foundations.color(neutralBase);
+  display: block;
+}
+
+.form-legend__text {
+  @include foundations.text(l, book);
+  color: foundations.color(neutral25);
+  display: block;
+}

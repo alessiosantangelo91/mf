@@ -1,0 +1,179 @@
+@use "../foundations";
+
+$_offset: calc(100% + #{foundations.spacing(2xs)});
+$_dropdownPositions: (
+  topLeft: (
+    left: 0,
+    bottom: $_offset,
+    transform: scale(0.8, 0.5),
+    transform-origin: bottom left,
+  ),
+  topCenter: (
+    left: 50%,
+    bottom: $_offset,
+    transform: translateX(-50%) scale(0.8, 0.5),
+    transform-origin: bottom center,
+  ),
+  topRight: (
+    right: 0,
+    bottom: $_offset,
+    transform: scale(0.8, 0.5),
+    transform-origin: bottom right,
+  ),
+  bottomLeft: (
+    left: 0,
+    top: $_offset,
+    transform: scale(0.8, 0.5),
+    transform-origin: top left,
+  ),
+  bottomCenter: (
+    left: 50%,
+    top: $_offset,
+    transform: translateX(-50%) scale(0.8, 0.5),
+    transform-origin: top center,
+  ),
+  bottomRight: (
+    right: 0,
+    top: $_offset,
+    transform: scale(0.8, 0.5),
+    transform-origin: top right,
+  ),
+);
+
+.dropdown-menu-wrapper {
+  position: relative;
+  width: fit-content;
+}
+
+.dropdown-menu {
+  @include foundations.radius(m);
+  @include foundations.elevation(m, neutral15);
+  background-color: foundations.color(neutralLight);
+  border: foundations.rem(2px) solid foundations.color(neutral85);
+  display: grid;
+  gap: foundations.spacing(4xs);
+  margin: 0;
+  max-width: foundations.rem(260px);
+  min-width: foundations.rem(140px);
+  opacity: 0;
+  padding: foundations.spacing(xs);
+  pointer-events: none;
+  position: absolute;
+  transition-duration: foundations.duration(fastest);
+  transition-property: transform, opacity;
+  transition-timing-function: foundations.timing(exit);
+  width: max-content;
+  z-index: foundations.zIndex(dropdownMenu);
+
+  .dropdown-menu__item-wrapper {
+    list-style-type: none;
+  }
+
+  .dropdown-menu-wrapper--visible-on-hover &:before {
+    @include foundations.absolute;
+    content: "";
+    transform: scale(1.15);
+    z-index: -1;
+  }
+}
+
+@each $position, $properties in $_dropdownPositions {
+  .dropdown-menu--#{foundations.camelToKebabCase($position)} {
+    @each $prop, $value in $properties {
+      #{$prop}: $value;
+    }
+  }
+}
+
+.dropdown-menu-wrapper--visible-on-hover:hover .dropdown-menu,
+.dropdown-menu--open {
+  opacity: 1;
+  pointer-events: all;
+  transform: scale(1);
+  transition-timing-function: foundations.timing(entrance);
+
+  &.dropdown-menu--top-center,
+  &.dropdown-menu--bottom-center {
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+.dropdown-menu__item {
+  @include foundations.radius(xs);
+  @include foundations.text(m, book, neutralBase);
+  align-items: center;
+  background-color: foundations.color(neutralLight);
+  column-gap: foundations.spacing(xs);
+  display: grid;
+  grid-auto-flow: column;
+  justify-content: left;
+  padding: foundations.spacing(xs);
+  text-align: left;
+  transition-duration: foundations.duration(fast);
+  transition-property: background-color, color;
+  transition-timing-function: foundations.timing(base);
+  width: 100%;
+
+  &:hover {
+    background-color: foundations.color(neutral95);
+    color: foundations.color(actionBase);
+    cursor: pointer;
+  }
+
+  &:focus-visible {
+    @include foundations.focus(actionBase, true, -(foundations.$outlineWidth));
+    color: foundations.color(actionBase);
+  }
+
+  &:active {
+    background-color: foundations.color(neutral95);
+    color: foundations.color(actionDark);
+  }
+
+  &:disabled,
+  &[disabled] {
+    background-color: foundations.color(neutralLight);
+    color: foundations.color(neutral75);
+    cursor: not-allowed;
+  }
+}
+
+.dropdown-menu__item--danger:not(.dropdown-menu__item--selected, :disabled, [disabled]) {
+  color: foundations.color(errorBase);
+
+  &:hover {
+    background-color: foundations.color(errorLight);
+    color: foundations.color(errorBase);
+  }
+
+  &:focus-visible {
+    @include foundations.focus(errorBase, true, -(foundations.$outlineWidth));
+    color: foundations.color(errorBase);
+  }
+
+  &:active {
+    background-color: foundations.color(errorLight);
+    color: foundations.color(errorDark);
+  }
+}
+
+.dropdown-menu__item--selected:not(:disabled, [disabled]) {
+  &,
+  &:hover {
+    @include foundations.text(m, bold, actionBase);
+    background-color: foundations.color(actionLight);
+  }
+
+  &:active {
+    color: foundations.color(actionDark);
+  }
+}
+
+.dropdown-menu__trigger .icon {
+  transition: transform foundations.duration(fast) foundations.timing(base);
+}
+
+.dropdown-menu__trigger[aria-expanded="true"] .icon,
+.dropdown-menu-wrapper--visible-on-hover:hover .dropdown-menu__trigger .icon {
+  transform: rotate(180deg);
+}

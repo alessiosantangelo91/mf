@@ -1,0 +1,29 @@
+@use "../../foundations";
+@use "mixins";
+@use "variables" as *;
+
+.container--with-sidebar {
+  @include mixins.transition(padding-left);
+  height: 100vh;
+  width: 100vw;
+
+  @include foundations.mq(m) {
+    padding-left: calc(#{$sidebarWidthCollapsed} + #{foundations.spacing(xl)});
+    padding-right: foundations.spacing(xl);
+  }
+
+  @include foundations.mq(l) {
+    padding-left: calc(#{$sidebarWidthCollapsed} + #{foundations.spacing(2xl)});
+    padding-right: foundations.spacing(2xl);
+  }
+
+  @include foundations.mq(xl) {
+    padding-left: calc(#{$sidebarWidth} + #{foundations.spacing(2xl)});
+  }
+
+  .side-panel--collapsed + & {
+    @include foundations.mq(xl) {
+      padding-left: calc(#{$sidebarWidthCollapsed} + #{foundations.spacing(2xl)});
+    }
+  }
+}

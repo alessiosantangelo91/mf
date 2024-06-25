@@ -1,0 +1,182 @@
+@use "../foundations";
+
+$_defaultBorder: foundations.rem(1px) solid foundations.color(neutralBaseOpacity15);
+$_tableHeader: "table--with-header";
+
+.table {
+  $_shadowCoverLeft: linear-gradient(
+    to right,
+    foundations.color(neutralLight) 30%,
+    foundations.color(neutralBaseOpacity0)
+  );
+  $_shadowCoverRight: linear-gradient(
+      to right,
+      foundations.color(neutralBaseOpacity0),
+      foundations.color(neutralLight) 70%
+    )
+    0 100%;
+  $_shadowLeft: radial-gradient(
+    farthest-side at 0 50%,
+    foundations.color(neutralBaseOpacity40),
+    foundations.color(neutralBaseOpacity0)
+  );
+  $_shadowRight: radial-gradient(
+      farthest-side at 100% 50%,
+      foundations.color(neutralBaseOpacity40),
+      foundations.color(neutralBaseOpacity0)
+    )
+    100% 0;
+  $_shadowCoverWidth: foundations.rem(28px);
+  $_shadowWidth: foundations.rem(12px);
+
+  @include foundations.radius(m);
+  background: $_shadowCoverLeft, $_shadowCoverRight, $_shadowLeft, $_shadowRight;
+  background-attachment: local, local, scroll, scroll;
+  background-position: 0 0, 100%, 0 0, 100%;
+  background-repeat: no-repeat;
+  background-size: $_shadowCoverWidth 100%, $_shadowCoverWidth 100%, $_shadowWidth 100%,
+    $_shadowWidth 100%;
+  overflow: auto;
+  position: relative;
+}
+
+.table--with-border {
+  border: $_defaultBorder;
+}
+
+.table :where(th, td) {
+  padding: foundations.spacing(xs s);
+}
+
+.table th {
+  @include foundations.text(m, bold);
+  white-space: nowrap;
+}
+
+.table td {
+  background-color: foundations.color(neutralLightOpacity5);
+  color: foundations.color(neutral25);
+}
+
+.table--s :where(th, td) {
+  padding: foundations.spacing(2xs xs);
+}
+
+.table--with-sticky-head {
+  $_shadowSize: foundations.rem(8px);
+  max-height: 70vh;
+
+  thead {
+    @include foundations.radius(m);
+    box-shadow: 0 $_shadowSize $_shadowSize -#{$_shadowSize} foundations.color(neutralBaseOpacity40);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+
+  th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+
+  &:not([class*="#{$_tableHeader}"]) th {
+    background-color: foundations.color(neutralLightOpacity5);
+  }
+}
+
+.table--with-sticky-col {
+  th:first-child:before {
+    content: "";
+    position: absolute;
+  }
+
+  :where(th:first-child, td:first-child) {
+    border-right: $_defaultBorder;
+    left: 0;
+    position: sticky;
+    z-index: 1;
+  }
+
+  :is(th:first-child, td:first-child) {
+    background-color: foundations.color(neutralLight);
+  }
+
+  &.table--with-header-neutral-95 th:first-child {
+    background-color: foundations.color(neutral95);
+  }
+
+  &.table--with-header-neutral-base th:first-child {
+    background-color: foundations.color(neutralBase);
+  }
+}
+
+.table--with-sticky-head.table--with-sticky-col th:first-child {
+  z-index: 3;
+}
+
+.table--with-row-border :where(tr:only-of-type, tr:not(:last-child)) :where(th, td) {
+  border-bottom: $_defaultBorder;
+}
+
+.table--with-col-border :where(th:not(:last-child), td:not(:last-child)) {
+  border-right: $_defaultBorder;
+}
+
+.table--with-header-neutral-95 th {
+  background-color: foundations.color(neutral95);
+}
+
+.table--with-header-neutral-base {
+  th {
+    background-color: foundations.color(neutralBase);
+    color: foundations.color(neutralLight);
+  }
+
+  &.table--with-col-border th:not(:last-child) {
+    border-right-color: foundations.color(neutral25);
+  }
+}
+
+.table--with-stripes:not([class*="#{$_tableHeader}"]) tr:nth-child(odd) td,
+.table--with-stripes[class*="#{$_tableHeader}"] tr:nth-child(even) td {
+  background-color: foundations.color(neutralBaseOpacity5);
+}
+
+.table--with-sticky-col.table--with-stripes:not([class*="#{$_tableHeader}"])
+  tr:nth-child(odd)
+  td:first-child,
+.table--with-sticky-col.table--with-stripes[class*="#{$_tableHeader}"]
+  tr:nth-child(even)
+  td:first-child {
+  background-color: foundations.color(neutral95);
+}
+
+.table--with-sticky-col.table--with-stripes:not([class*="#{$_tableHeader}"])
+  tr:nth-child(even)
+  td:first-child,
+.table--with-sticky-col.table--with-stripes[class*="#{$_tableHeader}"]
+  tr:nth-child(odd)
+  td:first-child {
+  background-color: foundations.color(neutralLight);
+}
+
+.table--with-stripes:not(.table--with-row-border, .table--with-sticky-col, .table--with-border) {
+  :where(th:first-child, td:first-child) {
+    @include foundations.radius(s, left);
+  }
+
+  :where(th:last-child, td:last-child) {
+    @include foundations.radius(s, right);
+  }
+}
+
+.table__wrapper {
+  @include foundations.radius(m);
+  @include foundations.text(m, book, neutralBase);
+  border-spacing: 0;
+  text-align: left;
+  vertical-align: top;
+  white-space: nowrap;
+  width: 100%;
+}

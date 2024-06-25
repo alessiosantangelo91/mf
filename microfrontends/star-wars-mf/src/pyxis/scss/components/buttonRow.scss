@@ -1,0 +1,9 @@
+@use "../foundations";
+
+.button-row {
+  align-items: center;
+  display: grid;
+  gap: foundations.spacing(s);
+  grid-auto-flow: column;
+  justify-content: space-between;
+}

@@ -1,0 +1,55 @@
+// These are the colors of our design system.
+
+@use "../tokens/colors" as *;
+@use "../tokens/gradients" as *;
+@use "lib";
+
+// Returns the `$color` hex from map `$colors`.
+//
+// @param {String} $color - Name of color
+// @return {Color} CSS variable of color
+@function color($color) {
+  @return lib.getCSSVariable("color", $colors, $color);
+}
+
+// Returns the `$gradient` from `$gradients`.
+//
+// @param {String} $gradient - Name of gradient
+// @return {Gradient} CSS variable of gradient
+@function gradient($gradient) {
+  @return lib.getCSSVariable("gradient", $gradients, $gradient);
+}
+
+// Create atom classes for all colors and gradient in $colors map and $gradients map
+@mixin createAtoms() {
+  @each $colorName, $colorValue in $colors {
+    .bg-#{lib.camelToKebabCase($colorName)} {
+      background-color: var(--color-#{lib.camelToKebabCase($colorName)});
+    }
+  }
+
+  @each $gradientName, $gradientValue in $gradients {
+    .gradient-#{lib.camelToKebabCase($gradientName)} {
+      background: var(--gradient-#{lib.camelToKebabCase($gradientName)});
+    }
+  }
+
+  @each $colorName, $colorValue in $colors {
+    .c-#{lib.camelToKebabCase($colorName)} {
+      color: var(--color-#{lib.camelToKebabCase($colorName)});
+    }
+  }
+}
+
+// Create root selector and css variable for all colors and gradient
+@mixin createCSSVariables() {
+  :root {
+    @each $color, $value in $colors {
+      --color-#{lib.camelToKebabCase($color)}: #{$value};
+    }
+
+    @each $gradient, $value in $gradients {
+      --gradient-#{lib.camelToKebabCase($gradient)}: #{$value};
+    }
+  }
+}

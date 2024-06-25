@@ -1,0 +1,17 @@
+@use "../foundations/colors";
+@use "../foundations/containers";
+@use "../foundations/elevations";
+@use "../foundations/hiding";
+@use "../foundations/layout";
+@use "../foundations/radius";
+@use "../foundations/spacings";
+@use "../foundations/typography";
+
+@include colors.createAtoms();
+@include containers.createAtoms();
+@include elevations.createAtoms();
+@include hiding.createAtoms();
+@include layout.createAtoms();
+@include radius.createAtoms();
+@include spacings.createAtoms();
+@include typography.createAtoms();

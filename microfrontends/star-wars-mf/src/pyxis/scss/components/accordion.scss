@@ -1,0 +1,171 @@
+@use "../foundations";
+
+// Set neutralLight color to text in alt mode.
+@mixin _setColorAlt {
+  .accordion-item--alt & {
+    color: foundations.color(neutralLight);
+  }
+}
+
+.accordion {
+  display: grid;
+  grid-auto-flow: row;
+  row-gap: foundations.spacing(xs);
+}
+
+.accordion-item {
+  @include foundations.radius(m);
+  background-color: foundations.color(neutral95);
+}
+
+.accordion-item--light {
+  background-color: foundations.color(neutralLight);
+}
+
+.accordion-item--alt {
+  background-color: foundations.color(neutralLightOpacity15);
+}
+
+.accordion-item--outline {
+  background-color: foundations.color(neutralLight);
+  position: relative;
+
+  &:before {
+    @include foundations.absolute;
+    @include foundations.radius(m);
+    border: foundations.rem(2px) solid foundations.color(neutral85);
+    content: "";
+    pointer-events: none;
+  }
+}
+
+.accordion-item__header {
+  @include _setColorAlt;
+  @include foundations.radius(m);
+  @include foundations.responsiveSpacing("padding", xs s, $fromXSmall: s m);
+  @include foundations.focus(actionBase, true, $radiusSize: l);
+  align-items: center;
+  border: foundations.rem(2px) solid transparent;
+  color: foundations.color(neutralBase);
+  cursor: pointer;
+  display: flex;
+  position: relative;
+  transition-duration: foundations.duration(fast);
+  transition-property: border-color, outline;
+  transition-timing-function: foundations.timing(base);
+  width: 100%;
+  will-change: border-color, outline;
+  z-index: 1;
+
+  &:hover {
+    border-color: foundations.color(neutral85);
+    color: foundations.color(actionBase);
+  }
+
+  .accordion-item--outline &:hover {
+    border-color: foundations.color(neutral75);
+  }
+
+  .accordion-item--alt & {
+    @include foundations.focus(neutralLight);
+
+    &:hover {
+      border-color: foundations.color(neutralLightOpacity15);
+      color: foundations.color(neutralLight);
+    }
+  }
+}
+
+.accordion-item__header__addon {
+  @include _setColorAlt;
+  color: foundations.color(brandBase);
+  flex: 0 0 fit-content;
+  margin-right: foundations.spacing(xs);
+}
+
+.accordion-item__header__content-wrapper {
+  flex: auto;
+  text-align: left;
+}
+
+.accordion-item__header__title {
+  @include foundations.text(l, bold);
+  display: block;
+  transition: color foundations.duration(fast) foundations.timing(base);
+}
+
+.accordion-item__header__subtitle {
+  @include foundations.text(m, book);
+  display: block;
+}
+
+.accordion-item__header__action-wrapper {
+  @include foundations.text(m, bold, actionBase);
+  @include _setColorAlt;
+  align-items: center;
+  column-gap: foundations.spacing(2xs);
+  display: grid;
+  grid-auto-flow: column;
+  user-select: none;
+}
+
+.accordion-item__header__action-icon {
+  border-radius: 50%;
+  padding: foundations.spacing(3xs);
+  transition-duration: foundations.duration(fast);
+  transition-property: background-color, transform;
+  transition-timing-function: foundations.timing(base);
+  will-change: background-color, transform;
+
+  .accordion-item__header:hover & {
+    background-color: foundations.color(neutralLight);
+
+    .accordion-item--light &,
+    .accordion-item--outline & {
+      background-color: foundations.color(actionLight);
+    }
+
+    .accordion-item--alt & {
+      background-color: foundations.color(neutralLightOpacity15);
+    }
+  }
+}
+
+.accordion-item__header__action-icon--open {
+  transform: rotate(180deg);
+}
+
+.accordion-item__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  overflow: hidden;
+  transition-duration: foundations.duration(fast);
+  transition-property: grid-template-rows, visibility;
+  transition-timing-function: foundations.timing(base);
+  visibility: hidden;
+}
+
+.accordion-item__panel--open {
+  grid-template-rows: 1fr;
+  visibility: visible;
+}
+
+.accordion-item__panel__inner-wrapper {
+  @include _setColorAlt;
+  @include foundations.radius(m, bottom);
+  @include foundations.responsiveSpacing("padding", 0 s, $fromXSmall: 0 m);
+  @include foundations.text(m, book, neutral25);
+  min-height: 0;
+  opacity: 0;
+  transform: translateY(foundations.rem(-20px));
+  transition-duration: foundations.duration(base);
+  transition-property: opacity, transform, padding;
+  transition-timing-function: foundations.timing(base);
+  will-change: opacity, transform, padding;
+
+  .accordion-item__panel--open & {
+    @include foundations.responsiveSpacing("padding", 3xs s s, $fromXSmall: 2xs m m);
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

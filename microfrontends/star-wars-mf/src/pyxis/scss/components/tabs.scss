@@ -1,0 +1,224 @@
+@use "sass:math";
+@use "../tokens/containers" as *;
+@use "../tokens/radius" as *;
+@use "../foundations";
+@use "animations";
+
+$_borderHeight: foundations.rem(1px);
+$_tabUnderlineOutlineOffset: foundations.rem(4px);
+$_underlineBorderRadius: foundations.rem(foundations.get($radius, 2xs));
+$_underlineHeight: foundations.rem(3px);
+
+.tabs__tablist-wrapper {
+  $offsetX: var(--offset, foundations.rem(foundations.get($containers, gutter)));
+  $outlineWidth: $_tabUnderlineOutlineOffset + foundations.rem(3px);
+
+  @include foundations.mq(base, xs) {
+    @include foundations.hideScrollbar();
+    margin: -#{$outlineWidth} calc(-1 * $offsetX);
+    overflow-x: scroll;
+    padding: $outlineWidth $offsetX;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    width: calc(100% + 2 * $offsetX);
+  }
+}
+
+.tabs__tablist {
+  align-items: end;
+  column-gap: foundations.spacing(xl);
+  display: grid;
+  grid-auto-columns: max-content;
+  grid-auto-flow: column;
+  justify-items: left;
+  position: relative;
+  width: fit-content;
+
+  @include foundations.mq(xs) {
+    width: 100%;
+  }
+}
+
+.tabs__tablist--with-border {
+  border-bottom: foundations.rem(1px) solid foundations.color(neutral85);
+
+  &.tabs__tablist--alt:before {
+    border-bottom-color: foundations.color(neutralLightOpacity15);
+  }
+}
+
+.tabs__tablist--with-pills {
+  column-gap: foundations.spacing(3xs);
+}
+
+.tabs__tab-panel:not([hidden]) {
+  animation: fadeIn foundations.duration(base) foundations.timing(entrance) forwards;
+}
+
+.tab {
+  @include foundations.radius(xs);
+  @include foundations.focus(actionBase, $offset: $_tabUnderlineOutlineOffset, $radiusSize: xs);
+  @include foundations.text(m, bold, neutral25);
+  align-items: end;
+  column-gap: foundations.spacing(2xs);
+  cursor: pointer;
+  display: grid;
+  grid-auto-flow: column;
+  transition: color foundations.duration(fast) foundations.timing(base);
+
+  @include foundations.mq(base, xs) {
+    scroll-snap-align: center;
+  }
+
+  &:hover:not(:disabled, [disabled]),
+  &:focus:not(:disabled, [disabled]),
+  &[aria-selected="true"] {
+    color: foundations.color(neutralBase);
+  }
+
+  &:not(.tab--pills) {
+    margin-bottom: calc(#{foundations.spacing(xs)} + #{$_underlineHeight});
+    position: relative;
+  }
+
+  &:disabled,
+  &[disabled] {
+    color: foundations.color(neutral50);
+    cursor: not-allowed;
+  }
+}
+
+.tab--alt {
+  @include foundations.focus(neutralLight, $offset: $_tabUnderlineOutlineOffset, $radiusSize: xs);
+  color: foundations.color(neutralLightOpacity75);
+
+  &:hover:not(:disabled, [disabled]),
+  &:focus:not(:disabled, [disabled]),
+  &[aria-selected="true"] {
+    color: foundations.color(neutralLight);
+  }
+
+  &:disabled,
+  &[disabled] {
+    color: foundations.color(neutralLightOpacity40);
+  }
+}
+
+.tab--pills {
+  $_height: foundations.rem(48px);
+
+  @include foundations.radius(s);
+  @include foundations.focus(actionBase, $radiusSize: m);
+  align-items: center;
+  height: $_height;
+  padding: foundations.spacing(0 s);
+  transition-property: background-color, color;
+
+  &[aria-selected="true"] {
+    background-color: foundations.color(brandLight);
+  }
+
+  &.tab--alt {
+    @include foundations.focus(neutralLight, $radiusSize: m);
+
+    &[aria-selected="true"] {
+      background-color: foundations.color(neutralLightOpacity15);
+    }
+  }
+}
+
+.tab__addon {
+  @include foundations.text(s, book, brandBase);
+
+  .tab:disabled &,
+  .tab[disabled] & {
+    color: foundations.color(neutral50);
+  }
+
+  .tab--alt & {
+    color: foundations.color(neutralLightOpacity75);
+  }
+}
+
+.tab__icon {
+  align-self: center;
+  color: foundations.color(neutral25);
+
+  .tab:hover & {
+    color: foundations.color(neutralBase);
+  }
+
+  .tab[aria-selected="true"] & {
+    color: foundations.color(brandBase);
+  }
+
+  .tab--alt & {
+    color: foundations.color(neutralLightOpacity75);
+  }
+
+  .tab--alt[aria-selected="true"] &,
+  .tab--alt:hover:not(:disabled, [disabled]) &,
+  .tab--alt:focus:not(:disabled, [disabled]) & {
+    color: foundations.color(neutralLight);
+  }
+
+  .tab--alt:disabled &,
+  .tab--alt[disabled] & {
+    color: foundations.color(neutralLightOpacity40);
+  }
+}
+
+.tab__line {
+  background-color: transparent;
+  border-radius: $_underlineBorderRadius;
+  height: $_underlineHeight;
+  position: absolute;
+  top: calc(100% + #{foundations.spacing(xs)} + #{$_borderHeight});
+  transform-origin: left;
+  transition: background-color foundations.duration(fast) foundations.timing(base);
+  width: 100%;
+
+  .tab:hover:not(:disabled, [disabled]) &,
+  .tab:focus:not(:disabled, [disabled]) & {
+    background-color: foundations.color(brandBaseOpacity40);
+  }
+
+  .tab[aria-selected="true"] &,
+  .tab[aria-selected="true"]:hover &,
+  .tab[aria-selected="true"]:focus & {
+    background-color: foundations.color(brandBase);
+  }
+
+  .tab--alt:hover:not(:disabled, [disabled]) &,
+  .tab--alt:focus:not(:disabled, [disabled]) & {
+    background-color: foundations.color(neutralLightOpacity40);
+  }
+
+  .tab--alt[aria-selected="true"] &,
+  .tab--alt[aria-selected="true"]:hover &,
+  .tab--alt[aria-selected="true"]:focus & {
+    background-color: foundations.color(neutralLight);
+  }
+}
+
+.tab[aria-selected="true"] .tab__line--animated {
+  $duration: var(--duration, 7s);
+  animation: animateLine $duration linear forwards;
+  will-change: transform, border-radius;
+}
+
+// Increase width from 0 to 100%
+@keyframes animateLine {
+  0% {
+    border-radius: #{math.div($_underlineBorderRadius, 0.05)}/ $_underlineBorderRadius;
+    transform: scaleX(0);
+  }
+  20% {
+    border-radius: #{math.div($_underlineBorderRadius, 0.2)}/ $_underlineBorderRadius;
+    transform: scaleX(0.2);
+  }
+  100% {
+    border-radius: $_underlineBorderRadius;
+    transform: scaleX(1);
+  }
+}

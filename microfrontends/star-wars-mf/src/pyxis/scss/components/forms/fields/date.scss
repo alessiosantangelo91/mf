@@ -1,0 +1,62 @@
+@use "../../../foundations";
+@use "../variables";
+
+.form-field__date {
+  @include foundations.text(l, book);
+  color: foundations.color(neutral50);
+  height: variables.$fieldHeight;
+  padding-right: foundations.spacing(s);
+  text-transform: uppercase;
+  width: variables.$fieldWidth;
+
+  // Increase padding and width to account for hidden custom date picker icon in Firefox only
+  @include foundations.onFirefox {
+    padding-left: foundations.spacing(s);
+    width: 100%;
+  }
+
+  &::-webkit-datetime-edit-day-field,
+  &::-webkit-datetime-edit-month-field,
+  &::-webkit-datetime-edit-year-field {
+    @include foundations.radius(2xs);
+    content: attr(placeholder);
+    &:focus,
+    &:active {
+      background: foundations.color(actionLight);
+      color: foundations.color(neutral25);
+    }
+  }
+
+  &::-webkit-calendar-picker-indicator {
+    background: transparent;
+    height: 100%;
+    left: 0;
+    margin-inline: 0;
+    padding: 0;
+    position: absolute;
+    width: variables.$fieldHeight;
+  }
+}
+
+.form-field__addon {
+  &.form-field__addon--date {
+    // Hide the custom date picker icon in Firefox only
+    @include foundations.onFirefox {
+      display: none;
+    }
+  }
+}
+
+.form-field__date--filled {
+  color: foundations.color(neutralBase);
+}
+
+.form-field__date--s {
+  height: variables.$fieldHeightSmall;
+  padding-right: foundations.spacing(xs);
+  width: variables.$fieldWidthSmall;
+
+  &::-webkit-calendar-picker-indicator {
+    width: variables.$fieldWidthSmall;
+  }
+}

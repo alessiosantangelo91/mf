@@ -1,0 +1,260 @@
+@use "../foundations";
+@use "mixins";
+@use "animations";
+
+$_variants: (neutral, brand, alert, success, error);
+$_offsetBase: m;
+$_offsetFromXS: xl;
+
+@mixin animation($animationName, $delay) {
+  animation: $animationName foundations.duration(fast) foundations.timing(entrance) forwards,
+    fadeOut foundations.duration(fast) foundations.timing(exit) forwards $delay;
+
+  &.toast--animation-on-enter {
+    animation: $animationName foundations.duration(fast) foundations.timing(entrance) forwards;
+  }
+}
+
+.toaster {
+  @include foundations.responsiveSpacing(
+    "padding-block-end",
+    $_offsetBase,
+    $fromXSmall: $_offsetFromXS
+  );
+  $_offsetWidth: #{foundations.spacing($_offsetBase)};
+  display: grid;
+  inset-block-end: 0;
+  inset-inline: 0;
+  justify-items: center;
+  left: foundations.spacing($_offsetBase);
+  max-height: 100vh;
+  overflow-y: auto;
+  pointer-events: none;
+  position: fixed;
+  row-gap: foundations.spacing(xs);
+  width: calc(100vw - 2 * $_offsetWidth);
+  z-index: foundations.zIndex(toast);
+}
+
+.toaster--top,
+.toaster--top-right {
+  bottom: unset;
+  top: var(--offset-top, foundations.spacing($_offsetBase));
+
+  @include foundations.mq(xs) {
+    top: var(--offset-top, foundations.spacing($_offsetFromXS));
+  }
+}
+
+.toaster--top-right {
+  @include foundations.mq(xs) {
+    justify-items: end;
+    left: unset;
+    right: foundations.spacing($_offsetFromXS);
+    transform: unset;
+  }
+}
+
+.toast {
+  @include foundations.radius(m);
+  @include foundations.responsiveSpacing("padding", xs xs xs s, $fromXSmall: s s s m);
+  @include foundations.responsiveSpacing("gap", 2xs, $fromXSmall: xs);
+  @include foundations.text(m, book);
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr;
+  justify-content: start;
+  overflow: hidden;
+  pointer-events: all;
+  position: relative;
+  width: 100%;
+
+  @include foundations.mq(xs) {
+    max-width: foundations.rem(448px);
+    width: max-content;
+  }
+
+  .toaster--top & {
+    transform-origin: top;
+  }
+
+  .toaster--top-right & {
+    transform-origin: right;
+  }
+}
+
+.toast--with-icon {
+  grid-template-columns: min-content 1fr;
+}
+
+.toast--animated {
+  $delay: var(--duration, 5s);
+  @include animation(toastSlideInFromBottom, $delay);
+
+  .toaster--top & {
+    @include animation(toastSlideInFromTop, $delay);
+  }
+
+  .toaster--top-right & {
+    @include animation(toastSlideInFromRight, $delay);
+  }
+
+  &:hover {
+    animation-play-state: running, paused;
+  }
+
+  &.toast--animation-on-exit {
+    animation: fadeOut foundations.duration(fast) foundations.timing(exit) forwards;
+  }
+}
+
+@each $variant in $_variants {
+  .toast--#{$variant} {
+    background-color: if(
+      $variant == "alert",
+      foundations.color(alertBase),
+      foundations.color(#{$variant}Light)
+    );
+    color: foundations.color(neutralBase);
+
+    &.toast--light {
+      background-color: if(
+        $variant == "neutral",
+        foundations.color(neutral95),
+        foundations.color(#{$variant}Light)
+      );
+      color: foundations.color(neutral25);
+
+      .toast__icon {
+        color: if(
+          $variant == "alert",
+          foundations.color(neutralBase),
+          foundations.color(#{$variant}Base)
+        );
+      }
+    }
+  }
+}
+
+.toast__icon {
+  align-self: center;
+  padding-right: foundations.spacing(3xs);
+  width: min-content;
+}
+
+.toast__content-wrapper {
+  align-items: center;
+  column-gap: foundations.spacing(s);
+  display: grid;
+  grid-auto-flow: column;
+  justify-content: space-between;
+}
+
+.toast__text {
+  padding-right: foundations.spacing(3xs);
+}
+
+.toast__close {
+  @include mixins.closeButton(rgba(255, 255, 255, 0.4), neutralBase);
+  color: foundations.color(neutralBase);
+  justify-self: end;
+  width: fit-content;
+
+  .toast--light &,
+  .toast--alert & {
+    @include mixins.closeButton();
+    color: foundations.color(neutralBase);
+  }
+}
+
+.toast__loader {
+  bottom: 0;
+  height: 3px;
+  left: 0;
+  position: absolute;
+  width: 100%;
+}
+
+.toast__loader__background {
+  stroke: var(--color-neutral-base-opacity-15);
+}
+
+.toast__loader__line {
+  animation: toastLoader calc(var(--duration) - #{foundations.duration(fast)}) linear forwards;
+  stroke: var(--color-neutral-base-opacity-50);
+  stroke-dasharray: 100;
+  stroke-dashoffset: 0;
+
+  .toast--animated:hover & {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes toastSlideInFromBottom {
+  0% {
+    opacity: 0;
+    transform: translateY(20%);
+  }
+  100% {
+    opacity: 100%;
+    transform: translateY(0%);
+  }
+}
+
+@keyframes toastSlideInFromTop {
+  0% {
+    opacity: 0;
+    transform: translateY(-20%);
+  }
+  100% {
+    opacity: 100%;
+    transform: translateY(0%);
+  }
+}
+
+@keyframes toastSlideInFromRight {
+  0% {
+    opacity: 0;
+    transform: translateX(20%);
+  }
+  100% {
+    opacity: 100%;
+    transform: translateX(0%);
+  }
+}
+
+@keyframes toastLoader {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 100;
+  }
+}
+
+.toast[data-theme="dark"] {
+  --color-action-base: #ffffff;
+  --color-action-dark: #e5f2f4;
+  --color-action-light: #007a92;
+  --color-alert-base: #f2e8bf;
+  --color-alert-dark: #ffc010;
+  --color-alert-light: #ffdc50;
+  --color-brand-base: #d4bae8;
+  --color-brand-dark: #f2eaf8;
+  --color-brand-light: #8334c2;
+  --color-error-base: #f1cbd7;
+  --color-error-dark: #f8e0e8;
+  --color-error-light: #df1654;
+  --color-neutral-25: #f3f4f4;
+  --color-neutral-50: #dddee1;
+  --color-neutral-75: #c7c9cd;
+  --color-neutral-85: #90939d;
+  --color-neutral-95: #595d6a;
+  --color-neutral-base: #ffffff;
+  --color-neutral-light: #21283b;
+  --color-success-base: #c3e6d1;
+  --color-success-dark: #e8f2ec;
+  --color-success-light: #1d8147;
+  --color-neutral-base-opacity-15: rgba(255, 255, 255, 0.2);
+  --color-neutral-base-opacity-50: rgba(255, 255, 255, 0.6);
+}

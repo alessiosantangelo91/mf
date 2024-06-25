@@ -1,0 +1,70 @@
+@use "../foundations";
+@use "mixins";
+
+$_states: (brand, alert, success, error, neutral);
+
+.message {
+  @include foundations.radius(s);
+  @include foundations.responsiveSpacing("column-gap", xs, $fromXSmall: s);
+  @include foundations.responsiveSpacing("padding", xs s, $fromXSmall: s);
+  align-items: center;
+  background-color: foundations.color(neutral95);
+  display: grid;
+  grid-template-columns: min-content auto;
+  width: 100%;
+}
+
+@each $state in $_states {
+  .message--#{$state} {
+    &.message--with-background-color,
+    &.message--background-tint {
+      background-color: if(
+        $state == "neutral",
+        foundations.color(neutral95),
+        foundations.color(#{$state}Light)
+      );
+    }
+
+    &.message--background-neutral {
+      background-color: foundations.color(neutral95);
+    }
+
+    &.message--background-neutral-light {
+      background-color: foundations.color(neutralLight);
+    }
+
+    .message__icon {
+      color: if($state == "alert", foundations.color(neutral25), foundations.color(#{$state}Base));
+    }
+  }
+}
+
+.message--ghost {
+  background-color: transparent;
+  padding: 0;
+
+  .message__icon {
+    padding-top: foundations.rem(1px);
+  }
+}
+
+.message.message--dismissable {
+  grid-template-columns: min-content auto min-content;
+}
+
+.message__content-wrapper {
+  display: grid;
+  gap: foundations.spacing(4xs);
+}
+
+.message__title {
+  @include foundations.text(m, bold, neutralBase);
+}
+
+.message__text {
+  @include foundations.text(m, book, neutral25);
+}
+
+.message__close {
+  @include mixins.closeButton();
+}

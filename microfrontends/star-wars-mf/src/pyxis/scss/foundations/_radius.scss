@@ -1,0 +1,58 @@
+// Radius is used to smooth our components borders.
+
+@use "../tokens/radius" as *;
+@use "breakpoints";
+@use "lib";
+
+// List of allowed edges for border-radius
+$_edges: (all, top, right, bottom, left);
+
+// Returns the radius value from map $radius
+//
+// @param {String} $size - Size of radius
+// @return {String} CSS variable of radius
+// @throw {Error}
+@function radius($size) {
+  @return lib.getCSSVariable("radius", $radius, $size);
+}
+
+// Includes border-radius by size and edge.
+//
+// @param {String} $size - Name of the size
+// @param {String} $edge [all] - Edge to apply the border-radius
+//
+// @throw Error if `$edge` in input is not present in `$_edgesList`
+@mixin radius($size, $edge: all) {
+  @if index($_edges, $edge) {
+    @if $edge == top {
+      border-radius: radius($size) radius($size) 0 0;
+    } @else if $edge == right {
+      border-radius: 0 radius($size) radius($size) 0;
+    } @else if $edge == bottom {
+      border-radius: 0 0 radius($size) radius($size);
+    } @else if $edge == left {
+      border-radius: radius($size) 0 0 radius($size);
+    } @else {
+      border-radius: radius($size);
+    }
+  } @else {
+    @error "Edge `#{$edge}` is not present in map `$_edges`";
+  }
+}
+
+// Create atom classes for all radius in $radius map
+@mixin createAtoms() {
+  @each $size, $_ in $radius {
+    .radius-#{$size} {
+      @include radius($size);
+    }
+  }
+}
+// Create root selector and css variable for all radius
+@mixin createCSSVariables() {
+  :root {
+    @each $size, $value in $radius {
+      --radius-#{$size}: #{lib.rem($value)};
+    }
+  }
+}

@@ -1,0 +1,157 @@
+@use "../../../foundations";
+@use "../mixins" as formMixins;
+@use "../../mixins";
+@use "../variables";
+
+// Add the same color and border-color to element.
+//
+// @param {Color} $color - Color name
+@mixin _addonColors($color) {
+  border-color: foundations.color($color);
+  color: foundations.color($color);
+}
+
+.form-field {
+  @include foundations.radius(xs);
+  @include foundations.text(l, book, neutralBase);
+  @include formMixins.fieldStateDefault;
+  background-color: foundations.color(neutralLight);
+  border: variables.$borderWidth solid foundations.color(neutral85);
+  cursor: text;
+  position: relative;
+  width: 100%;
+}
+
+.form-field--with-custom-dropdown {
+  cursor: pointer;
+}
+
+.form-field--disabled {
+  @include formMixins.fieldStateDisable;
+}
+
+.form-field--error {
+  @include formMixins.fieldStateError;
+}
+
+.form-field--with-opened-dropdown {
+  @include formMixins.fieldWithOpenedDropdown;
+}
+
+.form-field__wrapper {
+  cursor: inherit;
+  display: flex;
+  height: 100%;
+
+  .form-field--with-opened-dropdown & {
+    position: relative;
+    z-index: 2;
+  }
+}
+
+.form-field__wrapper--with-select {
+  display: grid;
+  grid-template-columns: auto variables.$fieldHeight;
+}
+
+.form-field__wrapper--with-select-s {
+  grid-template-columns: auto variables.$fieldHeightSmall;
+}
+
+.form-field__addon {
+  align-items: center;
+  color: foundations.color(neutral25);
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  position: relative;
+  transition: transform foundations.duration(fast) foundations.timing(base);
+
+  &:focus,
+  &:focus-visible {
+    outline: none;
+  }
+
+  &.form-field__addon--selectable {
+    cursor: pointer;
+
+    &[disabled] {
+      cursor: not-allowed;
+    }
+  }
+
+  &:not(.form-field__addon--selectable) {
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .form-field--with-prepend-text &,
+  .form-field--with-append-text & {
+    padding: foundations.spacing(0 xs);
+    transition-duration: foundations.duration(fast);
+    transition-property: border-color, color;
+    transition-timing-function: foundations.timing(base);
+    white-space: nowrap;
+  }
+
+  .form-field--with-prepend-text & {
+    border-right: foundations.rem(2px) solid foundations.color(neutral85);
+  }
+
+  .form-field--with-append-text & {
+    border-left: foundations.rem(2px) solid foundations.color(neutral85);
+  }
+
+  .form-field--with-custom-dropdown.form-field--with-opened-dropdown & {
+    transform: rotate(180deg);
+  }
+
+  .form-field__autocomplete--filled ~ & {
+    pointer-events: all;
+  }
+
+  .form-field:focus-within &,
+  .form-field:hover & {
+    @include _addonColors(actionBase);
+  }
+
+  .form-field.form-field--disabled & {
+    @include _addonColors(neutral75);
+  }
+
+  .form-field.form-field--error & {
+    @include _addonColors(errorBase);
+  }
+
+  .form-field__select--native + & {
+    bottom: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: variables.$fieldHeight;
+  }
+
+  .form-field__select--native.form-field__select--s + & {
+    width: variables.$fieldHeightSmall;
+  }
+
+  .form-field__wrapper--with-select & {
+    grid-column: 2/3;
+    grid-row: 1;
+    width: variables.$fieldHeight;
+  }
+
+  .form-field__wrapper--with-select-s & {
+    width: variables.$fieldHeightSmall;
+  }
+}
+
+.form-field__addon--loading {
+  .icon {
+    opacity: 0;
+  }
+
+  &:after {
+    @include mixins.loadingIcon;
+  }
+}

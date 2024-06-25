@@ -1,0 +1,42 @@
+@use "../../foundations";
+@use "../../tokens/textSizes" as *;
+
+$_labelSize: l;
+$_smallLabelSize: m;
+$_subLabelSize: m;
+
+@function _minHeight($labelSize) {
+  @return foundations.lineHeight(foundations.get($textSizes, $_labelSize, base)) +
+    foundations.lineHeight(foundations.get($textSizes, $_subLabelSize, base));
+}
+
+.form-label-wrapper {
+  @include foundations.text($_labelSize, book, neutralBase);
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+
+  /* stylelint-disable-next-line selector-max-specificity */
+  .grid__row:has(.form-label__sub):not(:has(.grid__row)) & {
+    align-items: end;
+    min-height: _minHeight($_labelSize);
+  }
+
+  /* stylelint-disable-next-line selector-max-specificity */
+  .grid__row:has(.form-label__sub, .form-label--s):not(:has(.grid__row)) & {
+    min-height: _minHeight($_smallLabelSize);
+  }
+}
+
+.form-label {
+  display: grid;
+}
+
+.form-label--s {
+  @include foundations.text($_smallLabelSize, book);
+}
+
+.form-label__sub {
+  @include foundations.text($_subLabelSize, book, neutral25);
+}

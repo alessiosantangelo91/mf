@@ -1,0 +1,237 @@
+@use "../foundations";
+
+.card {
+  @include foundations.radius(xl);
+  @include foundations.responsiveSpacing("padding", s, $fromSmall: m, $fromLarge: l);
+  background-color: foundations.color(neutralLight);
+  border: foundations.rem(2px) solid foundations.color(neutral85);
+  display: grid;
+  flex: 1;
+  gap: foundations.spacing(2xs);
+  position: relative;
+}
+
+.card--brand-dark {
+  background: foundations.color(brandDark);
+  border-color: foundations.color(brandDark);
+}
+
+.card--neutral-base {
+  background: foundations.color(neutralBase);
+  border-color: foundations.color(neutralBase);
+}
+
+.card--brand-dark,
+.card--neutral-base {
+  .card__action {
+    color: foundations.color(neutralLight);
+  }
+
+  &.card {
+    &:hover,
+    &:active,
+    &:focus {
+      .card__action {
+        color: foundations.color(actionBase);
+
+        /* stylelint-disable-next-line max-nesting-depth */
+        &:before {
+          background: foundations.color(neutralLight);
+        }
+      }
+    }
+  }
+}
+
+.card--m {
+  @include foundations.responsiveSpacing("padding", m, $fromSmall: l, $fromLarge: xl);
+}
+
+.card--l {
+  @include foundations.radius(3xl);
+  @include foundations.responsiveSpacing("padding", l, $fromSmall: 2xl, $fromLarge: 3xl);
+  gap: foundations.spacing(l);
+
+  .card__header {
+    gap: foundations.spacing(xs);
+  }
+
+  .card__title {
+    @include foundations.title(l, bold);
+  }
+
+  .card__header__action {
+    &:before {
+      border-radius: calc(#{foundations.radius(3xl)} - 3px);
+    }
+  }
+}
+
+.card--with-addon--top .card__addon {
+  justify-self: start;
+}
+
+.card--with-addon--left {
+  grid-template-columns: min-content 1fr;
+}
+
+.card--with-action {
+  cursor: pointer;
+  grid-template-columns: 1fr min-content;
+  transition: box-shadow foundations.timing(exit) foundations.duration(fastest);
+
+  &:hover {
+    @include foundations.elevation(m, neutral15);
+    transition: box-shadow foundations.timing(entrance) foundations.duration(fast);
+  }
+
+  &:active {
+    @include foundations.elevation(s, neutral15);
+    border-color: foundations.color(neutral75);
+  }
+}
+
+.card--with-addon--left.card--with-action {
+  grid-template-columns: min-content 1fr min-content;
+}
+
+.card__wrapper {
+  display: grid;
+  gap: foundations.spacing(3xs);
+}
+
+.card__addon {
+  align-self: center;
+}
+
+.card__header {
+  display: grid;
+  gap: foundations.spacing(2xs);
+}
+
+.card__header__action {
+  @include foundations.radius(2xs);
+  cursor: pointer;
+  display: flex;
+  outline: none;
+  &:before {
+    @include foundations.absolute;
+    border-radius: calc(#{foundations.radius(xl)} - 3px);
+    content: "";
+  }
+
+  &:focus-visible {
+    &:before {
+      outline: foundations.color(actionBase) solid foundations.rem(2px);
+      outline-offset: foundations.rem(4px);
+    }
+  }
+}
+
+.card__header__content {
+  display: grid;
+  gap: foundations.spacing(2xs);
+  grid-template-columns: auto 1fr;
+}
+
+.card__header__content__inline-action {
+  display: grid;
+  gap: foundations.spacing(2xs);
+  grid-template-columns: 1fr auto;
+}
+
+.card__action {
+  align-self: end;
+  border-radius: 50%;
+  color: foundations.color(actionBase);
+  overflow: hidden;
+  padding: foundations.spacing(3xs);
+  position: relative;
+  transition: all foundations.timing(exit) foundations.duration(fast);
+
+  &:focus {
+    outline: none;
+  }
+
+  &:before {
+    $_endGradient: #07a5b5;
+
+    @include foundations.absolute;
+    background-image: linear-gradient(45deg, foundations.color(actionBase) 50%, $_endGradient);
+    background-position: 100% 0;
+    background-size: 200%;
+    content: "";
+    opacity: 0;
+    transition: foundations.timing(exit) foundations.duration(fastest);
+    transition-property: background-position, opacity;
+  }
+
+  .card:hover & {
+    color: foundations.color(neutralLight);
+    transition: foundations.timing(entrance) foundations.duration(fast);
+    transition-property: background-position, opacity;
+
+    &:before {
+      opacity: 1;
+    }
+  }
+
+  .card:active & {
+    color: foundations.color(neutralLight);
+
+    &:before {
+      background: foundations.color(actionDark);
+    }
+  }
+
+  .card--with-addon--left & {
+    align-self: center;
+  }
+}
+
+.card__header__action__icon {
+  position: relative;
+  transition: color foundations.timing(exit) foundations.duration(fastest);
+
+  .card:hover & {
+    transition: color foundations.timing(entrance) foundations.duration(fast);
+  }
+}
+
+.card__footer {
+  padding-top: foundations.spacing(2xs);
+}
+
+.card[data-theme="dark"] {
+  .card__wrapper {
+    --color-action-base: #ffffff;
+    --color-action-dark: #e5f2f4;
+    --color-action-light: #007a92;
+    --color-alert-base: #f2e8bf;
+    --color-alert-dark: #ffc010;
+    --color-alert-light: #ffdc50;
+    --color-brand-base: #d4bae8;
+    --color-brand-dark: #f2eaf8;
+    --color-brand-light: #8334c2;
+    --color-error-base: #f1cbd7;
+    --color-error-dark: #f8e0e8;
+    --color-error-light: #df1654;
+    --color-neutral-25: rgba(255, 255, 255, 0.75);
+    --color-neutral-50: #dddee1;
+    --color-neutral-75: #c7c9cd;
+    --color-neutral-85: #90939d;
+    --color-neutral-95: #595d6a;
+    --color-neutral-base: #ffffff;
+    --color-neutral-light: #21283b;
+    --color-success-base: #c3e6d1;
+    --color-success-dark: #e8f2ec;
+    --color-success-light: #1d8147;
+    --color-neutral-base-opacity-15: rgba(255, 255, 255, 0.2);
+    --color-neutral-base-opacity-50: rgba(255, 255, 255, 0.6);
+  }
+
+  .card__header .badge {
+    --color-brand-light: #ffffff;
+    --color-brand-dark: #8334c2;
+  }
+}

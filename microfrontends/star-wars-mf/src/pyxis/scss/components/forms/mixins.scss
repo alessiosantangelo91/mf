@@ -1,0 +1,160 @@
+@use "../../foundations";
+@use "variables" as formsVariables;
+
+// Add CSS rules for default, hover and focus field states.
+@mixin fieldStateDefault {
+  @include safariFocusAsShadow(transparent);
+  outline: transparent solid foundations.$outlineWidthLarge;
+  outline-offset: 0;
+  transition-duration: foundations.duration(fast);
+  transition-property: border-color, outline-color;
+  transition-timing-function: foundations.timing(base);
+
+  &:focus-within,
+  &:hover:not(&--disabled, &--error, :disabled, [disabled]) {
+    border-color: foundations.color(actionBase);
+  }
+
+  &:focus-within {
+    @include safariFocusAsShadow(foundations.color(actionBaseOpacity20));
+    outline-color: foundations.color(actionBaseOpacity20);
+  }
+}
+
+// Add CSS rules for disabled field state.
+@mixin fieldStateDisable {
+  background-color: foundations.color(neutral95);
+  border-color: foundations.color(neutral85);
+  color: foundations.color(neutral75);
+  cursor: not-allowed;
+}
+
+// Add CSS rules for error field state.
+@mixin fieldStateError {
+  &,
+  &:active,
+  &:focus-within,
+  &:hover:not(&--disabled, :disabled, [disabled]) {
+    border-color: foundations.color(errorBase);
+  }
+
+  &:active,
+  &:focus-within {
+    outline-color: foundations.color(errorBaseOpacity20);
+
+    @include foundations.onSafari {
+      @include safariFocusAsShadow(foundations.color(errorDarkOpacity20));
+    }
+  }
+}
+
+// Add CSS rules for opened dropdown.
+@mixin fieldWithOpenedDropdown {
+  @include foundations.radius(xs, top);
+  z-index: 2;
+
+  &:focus,
+  &:focus-within,
+  &:active {
+    @include safariFocusAsShadow(transparent);
+    outline-color: transparent;
+  }
+}
+
+// Add CSS rules for error control state.
+@mixin fieldControlError($radiusSize: 2xs) {
+  @include foundations.focus(errorBase, true, $radiusSize: $radiusSize);
+
+  &,
+  &:active,
+  &:checked,
+  &:focus-visible,
+  &:focus-within,
+  &:hover:not(&--disabled, :disabled, [disabled]) {
+    border-color: foundations.color(errorBase);
+  }
+
+  &:checked,
+  &:checked:active:not(:disabled, [disabled]) {
+    background-color: foundations.color(errorBase);
+  }
+}
+
+// Add CSS rules for default control field.
+@mixin controlDefault($radiusSize: xs) {
+  $opticalOffset: foundations.rem(1px);
+
+  @include foundations.focus(actionBase, true, $radiusSize: $radiusSize);
+  border: formsVariables.$borderWidth solid foundations.color(neutral85);
+  cursor: pointer;
+  height: formsVariables.$controlSize;
+  margin-top: $opticalOffset;
+  transition-duration: foundations.duration(fast);
+  transition-property: background-color, border-color, box-shadow, outline-color;
+  transition-timing-function: foundations.timing(base);
+  width: formsVariables.$controlSize;
+  will-change: background-color, border-color, box-shadow, outline-color;
+
+  &:focus-visible,
+  &:hover:not(&--disabled, &--error, :disabled, [disabled], :checked) {
+    border-color: foundations.color(actionBase);
+  }
+
+  &:checked {
+    background-color: foundations.color(actionBase);
+    border-color: foundations.color(actionBase);
+  }
+
+  &:active:not(:disabled, [disabled]) {
+    border-color: foundations.color(actionDark);
+
+    &:checked {
+      background-color: foundations.color(actionDark);
+    }
+  }
+
+  &:disabled,
+  &[disabled] {
+    @include fieldStateDisable;
+    box-shadow: none;
+    outline: none;
+
+    &:checked {
+      border-color: foundations.color(neutral85);
+    }
+  }
+
+  .form-control-option--error & {
+    @include fieldControlError($radiusSize);
+  }
+
+  @include foundations.onSafari {
+    &:focus-within {
+      border-color: foundations.color(actionBase);
+    }
+  }
+}
+
+// Add CSS rules for focus shadow
+@mixin safariFocusAsShadow($boxShadowColor) {
+  @include foundations.onSafari {
+    box-shadow: 0 0 0 foundations.$outlineWidth $boxShadowColor;
+    outline: none;
+  }
+}
+
+// This selector selects an element within a column flanked by another column.
+// It is useful when we want to add properties automatically to elements within a grid composed of multiple columns.
+//
+// Selector composition:
+// .grid__row - Grid row classes
+// :has(.grid__row__column + .grid__row__column) - Initial selector contains two `.grid__row__column` side-by-side
+// :not(:has(.grid__row)) - Prevent multi `.grid__row` parent
+//
+// @param {String} $appendSelector - A selector to expand specificity
+@mixin elementInsideMultiColumnsRow($appendSelector: "") {
+  .grid__row:has(.grid__row__column + .grid__row__column):not(:has(.grid__row))#{$appendSelector}
+    & {
+    @content;
+  }
+}

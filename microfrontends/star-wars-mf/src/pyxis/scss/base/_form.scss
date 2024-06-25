@@ -1,0 +1,85 @@
+@use "../foundations";
+@use "../components/mixins";
+
+$_resizeIcon: "%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg clip-path='url(%23clip0_254_81187)'%3E%3Crect x='14.6064' y='10.364' width='6' height='2' rx='1' transform='rotate(135 14.6064 10.364)' fill='%2390939d'/%3E%3Crect x='13.8994' y='5.41431' width='12' height='2' rx='1' transform='rotate(135 13.8994 5.41431)' fill='%2390939d'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='clip0_254_81187'%3E%3Crect width='16' height='16' fill='white'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E";
+
+button,
+input,
+optgroup,
+select,
+textarea,
+input[type="submit"],
+fieldset {
+  appearance: none;
+  background: none;
+  border: none;
+  margin: 0;
+  outline: none;
+  padding: 0;
+
+  @include foundations.onSafari {
+    outline: none;
+  }
+}
+
+input,
+select,
+textarea {
+  &:focus:not([type="radio"], [type="checkbox"]),
+  &:focus-visible:not([type="radio"], [type="checkbox"]) {
+    outline: none;
+  }
+}
+
+input,
+select,
+textarea,
+input[type="submit"] {
+  &:disabled,
+  &[disabled] {
+    color: foundations.color(neutral75);
+    pointer-events: none;
+  }
+}
+
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration,
+input[type="password"]::-ms-reveal,
+::-ms-clear {
+  display: none;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  border: none;
+  border-radius: foundations.rem(6px) 0 0 foundations.rem(6px);
+  -webkit-text-fill-color: foundations.color(neutralBase);
+}
+
+input::-webkit-date-and-time-value {
+  text-align: left;
+}
+
+::placeholder {
+  color: foundations.color(neutral50);
+  opacity: 1;
+  user-select: none;
+}
+
+::-webkit-resizer {
+  @include mixins.backgroundImage($_resizeIcon);
+  background-color: transparent;
+  background-size: contain;
+  border: none;
+  box-shadow: none;
+  outline: none;
+}

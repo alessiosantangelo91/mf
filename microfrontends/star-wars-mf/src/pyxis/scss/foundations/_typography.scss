@@ -1,0 +1,186 @@
+// Typography defines all fonts-related rules.
+
+@use "../config";
+@use "../tokens/breakpoints" as breakpointTokens;
+@use "../tokens/fontWeights" as *;
+@use "../tokens/textSizes" as *;
+@use "../tokens/titleSizes" as *;
+@use "breakpoints";
+@use "colors";
+@use "fontFace";
+@use "lib";
+@use "sass:map";
+@use "sass:math";
+
+$_lineHeightBaseMultiplier: 1.5;
+$_lineHeightGoldenMultiplier: 1.618;
+
+// Returns a font-family with name and fallback
+//
+// @param {Map} $font - The font settings
+// @return {String} - A font-family value
+// @throw {Error}
+@function _fontFamily($font) {
+  @return #{lib.get($font, name), lib.get($font, fallback)};
+}
+
+// Returns a line-height by `$fontSize`
+//
+// @param {Number} $fontSize - The font-size to apply the line-height to
+// @return {Number} - A line-height represented in rem
+// @throw {Error}
+@function lineHeight($fontSize) {
+  $shouldUseBaseLineHeight: lib.stripUnit($fontSize) >= 32;
+  $baseToRem: lib.rem($_lineHeightBaseMultiplier * $fontSize);
+  $goldenToRem: lib.rem($_lineHeightGoldenMultiplier * $fontSize);
+
+  @return if($shouldUseBaseLineHeight, #{$baseToRem}, #{$goldenToRem});
+}
+
+// Base setting for Pyxis typography.
+// It has to be used only in the html tag.
+@mixin globalSettings() {
+  @include fontWeight(book);
+  font-family: _fontFamily(fontFace.$config);
+  font-feature-settings: lib.get(fontFace.$config, featureSettings);
+  font-size: config.$fontSizeRoot;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-variant-ligatures: none;
+  line-height: lib.rem(math.round(config.$fontSizeRoot * $_lineHeightGoldenMultiplier));
+  text-rendering: optimizeLegibility;
+}
+
+// Include the font-weight value by name.
+//
+// @param {String} $weight - The name of the weight
+// @throw {Error}
+// @return {Value} CSS variable of font-weight
+@mixin fontWeight($weight) {
+  @if not lib.get(fontFace.$config, weights, $weight) {
+    @error "Unknown key `#{$weight}` in map";
+  }
+
+  font-weight: var(--font-weight-#{$weight});
+}
+
+// Includes the properties contained in the typography map for every breakpoint
+//
+// @param {Map} $fontSizes - The map of fontSize
+// @param {String} $size - The name of the size
+// @param {String} $type - The name of the type, title or text
+// @throw {Error}
+// @return {Value} CSS variable of font-size
+@mixin _size($fontSizes, $size, $type) {
+  @each $breakpoint, $value in lib.get($fontSizes, $size) {
+    @include breakpoints.mq($breakpoint) {
+      $fontSize: lib.get($fontSizes, $size, $breakpoint);
+      font-size: var(--#{$type}-size-#{$size}-bp-#{$breakpoint});
+      line-height: lineHeight($fontSize);
+    }
+  }
+}
+
+// Include the responsive title size by name available in `$titleSizes`.
+//
+// @param {String} $size - The name of the size
+// @param {String} $weight - The name of the weight
+// @param {Color} $color - The name of the color
+//
+// @throw Error if font-weight `$weight` in input is not allowed in titles
+@mixin title($size, $weight, $color: null) {
+  @include _size($titleSizes, $size, "title");
+
+  @if ($color) {
+    color: colors.color($color);
+  }
+
+  @if map.has-key($fontWeights, $weight) {
+    @include fontWeight($weight);
+  } @else {
+    @error "Font-weight `#{$weight}` is not allowed in titles";
+  }
+}
+
+// Include the responsive text size by name available in `$textSizes`.
+//
+// @param {String} $size - The name of the size:
+// @param {String} $weight - The name of the weight
+// @param {Color} $color - The name of the color
+@mixin text($size, $weight, $color: null) {
+  @include fontWeight($weight);
+  @include _size($textSizes, $size, "text");
+
+  @if ($color) {
+    color: colors.color($color);
+  }
+}
+
+// Utility for ellipsis text
+@mixin textEllipsis() {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Create atom classes for all title and text variant
+@mixin createAtoms() {
+  @each $size, $_ in $titleSizes {
+    @each $weight, $_ in $fontWeights {
+      .title-#{lib.camelToKebabCase($size)}-#{$weight} {
+        @include title($size, $weight);
+      }
+    }
+  }
+
+  @each $breakpointName, $breakpointValue in breakpointTokens.$breakpoints {
+    @if (not breakpoints.isBase($breakpointName)) {
+      @each $sizeName, $value in $titleSizes {
+        .title-#{$sizeName}-from-#{$breakpointName} {
+          @include breakpoints.mq($breakpointName) {
+            @include _size($titleSizes, $sizeName, "title");
+          }
+        }
+      }
+    }
+  }
+
+  @each $size, $_ in $textSizes {
+    @each $weight, $_ in $fontWeights {
+      .text-#{lib.camelToKebabCase($size)}-#{$weight} {
+        @include text($size, $weight);
+      }
+    }
+  }
+
+  @each $breakpointName, $breakpointValue in breakpointTokens.$breakpoints {
+    @if (not breakpoints.isBase($breakpointName)) {
+      @each $sizeName, $value in $textSizes {
+        .text-#{$sizeName}-from-#{$breakpointName} {
+          @include breakpoints.mq($breakpointName) {
+            @include _size($textSizes, $sizeName, "text");
+          }
+        }
+      }
+    }
+  }
+}
+
+// Create root selector and css variable for all colors and gradient
+@mixin createCSSVariables() {
+  :root {
+    @each $size, $sizes in $titleSizes {
+      @each $bp, $value in $sizes {
+        --title-size-#{$size}-bp-#{$bp}: #{lib.rem($value)};
+      }
+    }
+    @each $size, $sizes in $textSizes {
+      @each $bp, $value in $sizes {
+        --text-size-#{$size}-bp-#{$bp}: #{lib.rem($value)};
+      }
+    }
+    @each $weight, $value in $fontWeights {
+      --font-weight-#{$weight}: #{$value};
+    }
+  }
+}

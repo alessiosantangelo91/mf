@@ -1,0 +1,89 @@
+// Utilities for working with Strings.
+
+// Converts a camelCase `$string` into a kebab-case one.
+//
+// @param {String} $string - String in camelCase
+// @return {String} - String in kebab-case
+@function camelToKebabCase($_string) {
+  $string: numberToString($_string);
+  $kebabString: "";
+  $numericSequence: "";
+
+  @for $i from 1 through str-length($string) {
+    $char: str-slice($string, $i, $i);
+    $nextChar: str-slice($string, $i + 1, $i + 1);
+
+    @if str-index("0123456789", $char) != null {
+      $numericSequence: $numericSequence + $char;
+
+      @if $nextChar == null or str-index("0123456789", $nextChar) == null {
+        @if $i == 1 {
+          $kebabString: $kebabString + $numericSequence;
+        } @else {
+          $kebabString: $kebabString + "-" + $numericSequence;
+        }
+
+        $numericSequence: "";
+      }
+    } @else if $char == to-upper-case($char) {
+      @if $i == 1 {
+        $kebabString: $kebabString + to-lower-case($char);
+      } @else {
+        $kebabString: $kebabString + "-" + to-lower-case($char);
+      }
+    } @else {
+      $kebabString: $kebabString + $char;
+    }
+  }
+
+  @if $numericSequence != "" {
+    $kebabString: $kebabString + "-" + $numericSequence;
+  }
+
+  @return $kebabString;
+}
+
+// Capitalize string.
+//
+// @param {String} $string - Initial string
+// @return {String} - Capitalized string
+@function capitalize($string) {
+  @return to-upper-case(str-slice($string, 1, 1)) + str-slice($string, 2);
+}
+
+// Replace a substring in a string with the given value.
+//
+// @param {String} $string - Initial string
+// @param {String} $search - Substring to replace
+// @param {String} $replace [""] - The new value for `$search` string
+// @return {String}
+@function stringReplace($string, $search, $replace: "") {
+  $index: str-index($string, $search);
+  @if $index {
+    @return str-slice($string, 1, $index - 1) + $replace +
+      stringReplace(str-slice($string, $index + str-length($search)), $search, $replace);
+  }
+  @return $string;
+}
+
+// Splits a string into a list of characters.
+//
+// @param {String} $string - A string to split into characters.
+// @return {List} - List of characters of $string
+@function stringToCharList($string) {
+  $chars: ();
+
+  @for $i from 1 through str-length($string) {
+    $chars: append($chars, str-slice($string, $i, $i));
+  }
+
+  @return $chars;
+}
+
+// Convert a number in string
+//
+// @param {Number} $number - The number to convert in string
+// @return {String} The converted string
+@function numberToString($number) {
+  @return quote($number + "");
+}
