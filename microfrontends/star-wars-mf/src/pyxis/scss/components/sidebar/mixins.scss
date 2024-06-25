@@ -1,0 +1,11 @@
+@use "../../foundations";
+
+// Set default transition duration and timing to the sidebar, providing the property.
+//
+// @param {String} $property - Name of property divided by comma.
+@mixin transition($property...) {
+  transition-duration: foundations.duration(base);
+  transition-property: $property;
+  transition-timing-function: foundations.timing(base);
+  will-change: $property;
+}

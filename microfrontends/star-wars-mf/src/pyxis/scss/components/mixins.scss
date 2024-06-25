@@ -1,0 +1,81 @@
+@use "../foundations";
+@use "../foundations/breakpoints";
+@use "animations";
+@use "../config";
+
+// Keep the alphabetical order
+
+// Add a background image with a proper color.
+//
+// @param {String} $image - An svg
+@mixin backgroundImage($image) {
+  background-image: url("data:image/svg+xml,#{$image}");
+}
+
+// Add property to create a loading icon with pseudo element
+//
+// @param {String} $size - Size of loader icon
+// @param {String} $borderWidth - Size of border
+// @param {Color} $color - Color name
+// @param {Color} $accentColor - Accent color name
+@mixin loadingIcon(
+  $size: foundations.rem(26px),
+  $borderWidth: foundations.rem(3px),
+  $color: foundations.color(actionLight),
+  $accentColor: foundations.color(actionBase)
+) {
+  animation: loadingIcon foundations.duration(slowest) infinite linear,
+    fadeIn foundations.duration(fast) foundations.timing(base);
+  border: $borderWidth solid $color;
+  border-radius: 50%;
+  border-top-color: $accentColor;
+  content: "";
+  height: $size;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  width: $size;
+}
+
+@mixin closeButton($bgColor: foundations.color(neutralLight), $focusColor: neutralBase) {
+  @include foundations.focus(
+    $focusColor,
+    $offset: (-1 * foundations.$outlineOffset),
+    $radiusSize: m
+  );
+  align-self: start;
+  border-radius: 50%;
+  cursor: pointer;
+  padding: foundations.spacing(3xs);
+  transition: background-color foundations.duration(fast) foundations.timing(base);
+
+  &:hover {
+    background-color: $bgColor;
+  }
+}
+
+// Apply custom always-visible Pyxis scrollbar styles
+@mixin customScrollbar {
+  & ::-webkit-scrollbar {
+    @include foundations.radius(xs);
+    background: transparent;
+    width: foundations.rem(config.$scrollBarWidth);
+
+    @include breakpoints.mq(s) {
+      background: foundations.color(neutralLight);
+    }
+  }
+
+  & ::-webkit-scrollbar:hover {
+    background: foundations.color(neutralLight);
+  }
+
+  & ::-webkit-scrollbar-thumb {
+    @include foundations.radius(xs);
+    background: foundations.color(neutral75);
+  }
+
+  & ::-webkit-scrollbar-thumb:hover {
+    background: foundations.color(neutral50);
+  }
+}

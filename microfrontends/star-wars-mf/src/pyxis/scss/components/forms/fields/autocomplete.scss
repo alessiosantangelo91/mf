@@ -1,0 +1,16 @@
+@use "../../../foundations";
+@use "../variables";
+
+.form-field__autocomplete {
+  @include foundations.text(l, book);
+  color: foundations.color(neutralBase);
+  height: variables.$fieldHeight;
+  padding-left: foundations.spacing(s);
+  width: variables.$fieldWidth;
+}
+
+.form-field__autocomplete--s {
+  height: variables.$fieldHeightSmall;
+  padding-left: foundations.spacing(xs);
+  width: variables.$fieldWidthSmall;
+}

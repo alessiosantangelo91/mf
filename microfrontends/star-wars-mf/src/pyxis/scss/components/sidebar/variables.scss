@@ -1,0 +1,9 @@
+@use "../../foundations";
+
+$sidebarWidth: foundations.rem(288px);
+$sidebarWidthCollapsed: foundations.rem(80px);
+$logoHeight: foundations.rem(40px);
+$logoWidth: foundations.rem(40px);
+$logoCollapsedWidth: foundations.rem(48px);
+$navItemMaxWidth: foundations.rem(255px);
+$footerAvatarSize: foundations.rem(32px);

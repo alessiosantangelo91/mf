@@ -1,0 +1,97 @@
+@use "../../../foundations";
+@use "../variables";
+@use "sass:math";
+
+.form-field__time {
+  align-items: center;
+  color: foundations.color(neutralBase);
+  display: grid;
+  grid-auto-flow: column;
+  height: variables.$fieldHeight;
+  justify-content: start;
+  padding-right: foundations.spacing(s);
+  text-transform: uppercase;
+  width: variables.$fieldWidth;
+
+  &::-webkit-calendar-picker-indicator {
+    display: none;
+  }
+}
+
+.form-field__time--s {
+  height: variables.$fieldHeightSmall;
+  padding-right: foundations.spacing(xs);
+  width: variables.$fieldWidthSmall;
+}
+
+.form-field__time__segment {
+  color: foundations.color(neutral50);
+
+  &:first-child {
+    // Align the hour segment to the right to keep consistent alignment for single digits
+    text-align: right;
+  }
+
+  &:not([aria-hidden]) {
+    min-width: foundations.rem(20px);
+    padding: foundations.spacing(0 4xs);
+  }
+
+  &:not([data-placeholder]) {
+    color: foundations.color(neutralBase);
+  }
+
+  &:focus {
+    @include foundations.radius(2xs);
+    background: foundations.color(actionLight);
+    outline: none;
+  }
+}
+
+.time-dropdown {
+  $_borderSize: foundations.rem(2px);
+
+  @include foundations.elevation(m, neutral15);
+  @include foundations.radius(xs);
+  align-items: start;
+  background-color: foundations.color(neutralLight);
+  border: $_borderSize solid foundations.color(neutral85);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+
+  div:not([id*="react-aria"]) > & {
+    left: -$_borderSize;
+    position: absolute;
+    top: calc(100% + #{foundations.spacing(3xs)});
+    z-index: foundations.zIndex(dropdownMenu);
+  }
+}
+
+.time-dropdown__column {
+  display: grid;
+  gap: foundations.spacing(xs);
+  max-height: foundations.rem(280px);
+  overflow-y: scroll;
+  padding: foundations.spacing(s);
+}
+
+.time-dropdown__column__button {
+  @include foundations.text(l, book);
+  @include foundations.radius(s);
+  @include foundations.focus(actionBase, $offset: foundations.spacing(4xs), $radiusSize: xs);
+  color: foundations.color(neutral25);
+  cursor: pointer;
+  height: foundations.rem(32px);
+  min-width: foundations.rem(32px);
+
+  &:hover {
+    background-color: foundations.color(neutral95);
+  }
+
+  &.time-dropdown__column__button--selected {
+    @include foundations.text(l, bold);
+    background: foundations.color(actionLight);
+    color: foundations.color(actionBase);
+  }
+}

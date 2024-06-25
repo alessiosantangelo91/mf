@@ -1,0 +1,36 @@
+@use "../../../foundations";
+@use "../variables";
+
+.form-field__text {
+  @include foundations.text(l, book);
+  height: variables.$fieldHeight;
+  padding: foundations.spacing(0 s);
+  width: 100%;
+
+  .form-field--with-prepend-icon &,
+  .form-field--with-append-icon &,
+  .form-field--with-prepend-text &,
+  .form-field--with-append-text & {
+    width: variables.$fieldWidth;
+  }
+
+  .form-field--with-prepend-icon & {
+    padding-left: 0;
+  }
+
+  .form-field--with-append-icon & {
+    padding-right: 0;
+  }
+}
+
+.form-field__text--s {
+  height: variables.$fieldHeightSmall;
+  padding: foundations.spacing(0 xs);
+
+  .form-field--with-prepend-icon &,
+  .form-field--with-append-icon &,
+  .form-field--with-prepend-text &,
+  .form-field--with-append-text & {
+    width: variables.$fieldWidthSmall;
+  }
+}

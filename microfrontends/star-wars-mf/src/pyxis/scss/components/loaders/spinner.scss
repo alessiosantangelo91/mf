@@ -1,0 +1,25 @@
+@use "../../foundations";
+@use "../animations";
+
+$_spinnerSize: foundations.rem(60px);
+$_spinnerSizeSmall: foundations.rem(20px);
+
+.loader__spinner {
+  animation: spin 1s infinite linear;
+  border: foundations.rem(6px) solid foundations.color(brandLight);
+  border-radius: 50%;
+  border-top-color: foundations.color(brandBase);
+  height: $_spinnerSize;
+  width: $_spinnerSize;
+
+  .loader--s & {
+    border-width: foundations.rem(2px);
+    height: $_spinnerSizeSmall;
+    width: $_spinnerSizeSmall;
+  }
+
+  .loader--alt & {
+    border-color: foundations.color(neutralLightOpacity40);
+    border-top-color: foundations.color(neutralLight);
+  }
+}

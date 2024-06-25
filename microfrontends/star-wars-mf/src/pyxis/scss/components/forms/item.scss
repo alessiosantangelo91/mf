@@ -1,0 +1,33 @@
+@use "../../foundations";
+
+.form-item {
+  align-items: start;
+  display: grid;
+  grid-template-rows: min-content auto;
+  row-gap: foundations.spacing(2xs);
+  width: 100%;
+}
+
+.form-item__wrapper {
+  display: grid;
+  row-gap: foundations.spacing(3xs);
+}
+
+.form-item__error-message {
+  $opticalOffset: foundations.rem(3px);
+
+  @include foundations.text(m, book, errorBase);
+  align-items: start;
+  display: grid;
+  gap: foundations.spacing(2xs);
+  grid-auto-flow: column;
+  justify-content: start;
+
+  .icon {
+    padding-top: $opticalOffset;
+  }
+}
+
+.form-item__hint {
+  @include foundations.text(m, book, neutral25);
+}

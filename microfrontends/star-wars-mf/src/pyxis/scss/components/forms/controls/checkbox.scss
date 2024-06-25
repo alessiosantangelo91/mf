@@ -1,0 +1,65 @@
+@use "../../../foundations";
+@use "../mixins" as formMixins;
+@use "../variables";
+@use "../../mixins";
+
+$_checkmarkIcon: "%3Csvg width='12' height='12' viewBox='0 0 12 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10.4413 3.02222L3.78257 8.97764L1.55872 5.94636' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E";
+$_checkmarkIconNeutral75: "%3Csvg width='12' height='12' viewBox='0 0 12 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10.4413 3.02222L3.78257 8.97764L1.55872 5.94636' fill='none' stroke='%23c7c9cd' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E";
+$_indeterminateIcon: "%3Csvg width='10' height='2' viewBox='0 0 10 2' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='-1' y='-5' width='12' height='12' fill='%23ffffff'/%3E%3C/svg%3E";
+$_indeterminateIconNeutral75: "%3Csvg width='10' height='2' viewBox='0 0 10 2' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='-1' y='-5' width='12' height='12' fill='%23c7c9cd'/%3E%3C/svg%3E";
+
+// Set background and border color.
+//
+// @param {Color} $color - Color name
+// @param {Color} $color2 [$color] - Color name for border
+@mixin _color($backgroundColor, $borderColor: $backgroundColor) {
+  background-color: foundations.color($backgroundColor);
+  border-color: foundations.color($borderColor);
+}
+
+.form-control__checkbox {
+  @include foundations.radius(2xs);
+  @include formMixins.controlDefault;
+  position: relative;
+
+  &:checked:after,
+  &:indeterminate:after {
+    background-position: center;
+    background-repeat: no-repeat;
+    content: "";
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+
+  &:checked:after {
+    @include mixins.backgroundImage($_checkmarkIcon);
+  }
+
+  &:indeterminate {
+    @include _color(actionBase);
+
+    &:after {
+      @include mixins.backgroundImage($_indeterminateIcon);
+    }
+
+    .form-control-option--error & {
+      @include _color(errorBase);
+    }
+  }
+
+  &:disabled,
+  &[disabled] {
+    @include _color(neutral95, neutral85);
+
+    &:checked:after {
+      @include mixins.backgroundImage($_checkmarkIconNeutral75);
+    }
+
+    &:indeterminate:after {
+      @include mixins.backgroundImage($_indeterminateIconNeutral75);
+    }
+  }
+}

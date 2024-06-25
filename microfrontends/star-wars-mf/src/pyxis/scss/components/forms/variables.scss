@@ -1,0 +1,8 @@
+@use "../../foundations";
+
+$borderWidth: foundations.rem(2px);
+$controlSize: foundations.rem(20px);
+$fieldHeight: foundations.rem(48px);
+$fieldHeightSmall: foundations.rem(32px);
+$fieldWidth: calc(100% - #{$fieldHeight});
+$fieldWidthSmall: calc(100% - #{$fieldHeightSmall});

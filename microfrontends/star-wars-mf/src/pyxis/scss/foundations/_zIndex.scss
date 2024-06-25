@@ -1,0 +1,6 @@
+@use "../tokens/zIndexes" as *;
+@use "lib";
+
+@function zIndex($component) {
+  @return lib.get($zIndexes, $component);
+}

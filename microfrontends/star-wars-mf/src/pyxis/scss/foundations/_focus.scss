@@ -1,0 +1,63 @@
+@use "lib";
+@use "colors";
+@use "layout";
+@use "radius";
+
+$outlineWidth: lib.rem(2px);
+$outlineWidthLarge: lib.rem(3px);
+$outlineOffset: lib.rem(2px);
+
+@mixin _focusProperties($colorName, $width, $offset) {
+  outline: colors.color($colorName) solid $width;
+  outline-offset: $offset;
+}
+
+// Add CSS rules for focus status, used in buttons and links.
+//
+// @param {Color} $colorName - Value of focus color
+// @param {Bool} $inset - Positioning of focus
+// @param {Value} $offset - Offset size
+// @param {Value} $width - Width of focus
+// @param {Value} $opacity - Opacity of outline
+// @param {String} $radiusSize - Radius of the item
+// @param {Bool} $focusWithin - Whether to activate focus on `focus-within` state instead of `focusVisible`
+@mixin focus(
+  $colorName,
+  $inset: false,
+  $offset: $outlineOffset,
+  $width: $outlineWidth,
+  $radiusSize: null,
+  $focusWithin: false
+) {
+  outline-color: colors.color($colorName);
+
+  @if $focusWithin {
+    &:focus-within {
+      @include _focusProperties($colorName, $width, $offset);
+    }
+  } @else {
+    &:focus-visible {
+      @include _focusProperties($colorName, $width, $offset);
+    }
+  }
+
+  @include lib.onSafari {
+    &:focus,
+    &:focus-within {
+      outline: none;
+      position: relative;
+
+      &:before {
+        $beforeOffset: if($inset, -($width + ($offset * 2)), -($width + $offset));
+
+        @if ($radiusSize) {
+          @include radius.radius($radiusSize);
+        }
+
+        @include layout.absolute($beforeOffset, $beforeOffset, $beforeOffset, $beforeOffset);
+        border: $width solid colors.color($colorName);
+        content: "";
+      }
+    }
+  }
+}

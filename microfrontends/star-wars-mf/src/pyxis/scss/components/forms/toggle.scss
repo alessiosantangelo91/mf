@@ -1,0 +1,121 @@
+@use "../../foundations";
+@use "../mixins";
+@use "mixins" as formMixin;
+@use "sass:math";
+
+$_height: foundations.rem(26px);
+$_width: foundations.rem(48px);
+$_sliderOffset: foundations.rem(2px);
+$_sliderSize: $_height - $_sliderOffset * 2;
+$_sliderActiveLeft: $_width - ($_sliderOffset * 2) - $_sliderSize;
+
+$_checkmarkIconActionBase: "%3Csvg width='12' height='12' viewBox='0 0 12 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10.4413 3.02222L3.78257 8.97764L1.55872 5.94636' fill='none' stroke='%23007a92' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E";
+$_checkmarkIconActionDark: "%3Csvg width='12' height='12' viewBox='0 0 12 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10.4413 3.02222L3.78257 8.97764L1.55872 5.94636' fill='none' stroke='%23005465' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E";
+
+@mixin _toggleSliderDefaultProps {
+  content: "";
+  height: $_sliderSize;
+  left: $_sliderOffset;
+  position: absolute;
+  top: $_sliderOffset;
+  width: $_sliderSize;
+}
+
+@mixin _toggleSlider {
+  &:after {
+    @include _toggleSliderDefaultProps;
+    background-color: foundations.color(neutralLight);
+    border-radius: 50%;
+    transform: translateX(0);
+    transition: transform foundations.duration(fast) foundations.timing(base);
+  }
+
+  &:checked:after {
+    transform: translateX($_sliderActiveLeft);
+  }
+
+  &:disabled:after,
+  &[disabled]:after {
+    background-color: foundations.color(neutral95);
+  }
+
+  &:before {
+    @include _toggleSliderDefaultProps;
+    @include mixins.backgroundImage($_checkmarkIconActionBase);
+    background-position: 50%;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transform: translateX(0) scale(0.5) rotate(-30deg);
+    transition-duration: foundations.duration(fast);
+    transition-property: opacity, transform;
+    transition-timing-function: foundations.timing(base);
+    z-index: 1;
+  }
+
+  &:active:before {
+    @include mixins.backgroundImage($_checkmarkIconActionDark);
+  }
+
+  &:checked:before {
+    opacity: 1;
+    transform: translateX($_sliderActiveLeft) scale(1) rotate(0);
+  }
+}
+
+.toggle {
+  align-items: center;
+  column-gap: foundations.spacing(s);
+  cursor: pointer;
+  display: grid;
+  grid-auto-flow: column;
+  width: fit-content;
+}
+
+.toggle--disabled {
+  cursor: not-allowed;
+}
+
+.toggle__input {
+  @include _toggleSlider;
+  @include foundations.focus(actionBase, $radiusSize: m);
+  background-color: foundations.color(neutral75);
+  border-radius: math.div($_height, 2);
+  cursor: pointer;
+  flex-shrink: 0;
+  height: $_height;
+  position: relative;
+  transition-duration: foundations.duration(fast);
+  transition-property: border-color, outline-color, background-color;
+  transition-timing-function: foundations.timing(base);
+  width: $_width;
+
+  &:focus-visible,
+  &:hover:not(:disabled, [disabled], :checked) {
+    border-color: foundations.color(actionBase);
+  }
+
+  &:hover,
+  &:focus {
+    background-color: foundations.color(neutral50);
+  }
+
+  &:active {
+    background-color: foundations.color(neutral25);
+  }
+
+  &:checked,
+  &:checked:hover,
+  &:checked:focus {
+    background-color: foundations.color(actionBase);
+  }
+
+  &:checked:active {
+    background-color: foundations.color(actionDark);
+  }
+
+  &:disabled,
+  &[disabled] {
+    background-color: foundations.color(neutral85);
+    cursor: not-allowed;
+  }
+}

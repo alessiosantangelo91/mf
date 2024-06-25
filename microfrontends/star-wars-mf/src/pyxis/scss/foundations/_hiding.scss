@@ -1,0 +1,52 @@
+// Hiding Rules define all rules for hiding content based on device width.
+
+@use "../tokens/breakpoints" as tokens;
+@use "breakpoints";
+@use "lib";
+
+// Hide an element from `$fromBreakpoint` to `$untilBreakpoint` value.
+// Outside the indicated breakpoints the element will have the assigned display value.
+//
+// @param {String} $fromBreakpoint - Name of start breakpoint
+// @param {String} $untilBreakpoint - Name of end breakpoint
+//
+// @throw Error if `$untilBreakpoint` is smaller or equal to `$fromBreakpoint`.
+@mixin hide($fromBreakpoint: base, $untilBreakpoint: null) {
+  @if (
+    lib.isNotNull($untilBreakpoint) and
+      breakpoints.isGreaterOrEqualTo($fromBreakpoint, $untilBreakpoint)
+  ) {
+    @error "You cannot use a `$untilBreakpoint` value smaller or equal than `$fromBreakpoint` value";
+  }
+
+  @include breakpoints.mq($fromBreakpoint, $untilBreakpoint) {
+    display: none;
+  }
+}
+
+// Hide scrollbar
+@mixin hideScrollbar {
+  -ms-overflow-style: none;
+  overflow-y: scroll;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+// Create atom classes for hiding
+@mixin createAtoms() {
+  @each $breakpointName, $breakpointValue in tokens.$breakpoints {
+    $append: if(breakpoints.isBase($breakpointName), "", "-from-#{$breakpointName}");
+    .hide#{$append} {
+      @include hide($breakpointName);
+    }
+    @if (not breakpoints.isBase($breakpointName)) {
+      $nextBreakpoint: lib.getNextElementKey(tokens.$breakpoints, $breakpointName $breakpointValue);
+      .hide-on-#{$breakpointName} {
+        @include hide($breakpointName, $nextBreakpoint);
+      }
+    }
+  }
+}
